@@ -11,7 +11,7 @@ import { VoyageFooter } from "@/components/footer/voyage-footer"
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#F4E8D1] text-[#062A3A] transition-colors duration-500 dark:bg-[#062A3A] dark:text-[#F4E8D1]">
+    <div className="flex min-h-screen flex-col bg-[#F4E8D1] text-[#062A3A] transition-colors duration-500 dark:bg-[#d9c698] dark:text-[#F4E8D1]">
       {/* 01. The Departure // Hero Section */}
       <HeroVoyage />
 
