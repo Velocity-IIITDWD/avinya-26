@@ -2,79 +2,102 @@
 
 import React from "react"
 import Image from "next/image"
-import { AvinyaWorld, WORLD_CONFIG } from "@/data/events"
+import { WorldFilterId, WorldTheme, worldThemes, useWorldTheme } from "@/lib/theme"
 
-export type FilterValue = "ALL" | AvinyaWorld
+export type WorldFilterValue = WorldFilterId
+export type CategoryFilterValue = "all" | "technical" | "cultural"
 
 interface EventFiltersProps {
-  activeFilter: FilterValue
-  onSelectFilter: (filter: FilterValue) => void
-  counts: Record<FilterValue, number>
+  // World filtering
+  activeWorld?: WorldFilterValue
+  activeFilter?: WorldFilterValue // alias for backwards compatibility
+  onSelectWorld?: (world: WorldFilterValue) => void
+  onSelectFilter?: (filter: WorldFilterValue) => void // alias
+  worldCounts?: Record<WorldFilterValue, number>
+  counts?: Record<WorldFilterValue, number> // alias
+
+  // Category filtering
+  activeCategory?: CategoryFilterValue
+  onSelectCategory?: (category: CategoryFilterValue) => void
+  categoryCounts?: Record<CategoryFilterValue, number>
+
+  // Search
   searchQuery: string
   onSearchChange: (query: string) => void
 }
 
-const FILTER_ITEMS: {
-  id: FilterValue
+const WORLD_ITEMS: WorldTheme[] = [
+  worldThemes.all,
+  worldThemes.lastOutpost,
+  worldThemes.pandemonium,
+  worldThemes.carnivalIsland,
+]
+
+interface CategoryOption {
+  id: CategoryFilterValue
   label: string
-  shortLabel: string
-  subtitle: string
-  icon?: string
-  accentColor: string
-}[] = [
+  tagline: string
+  icon: "compass" | "technical" | "cultural"
+}
+
+const CATEGORY_ITEMS: CategoryOption[] = [
   {
-    id: "ALL",
-    label: "ALL DESTINATIONS",
-    shortLabel: "ALL",
-    subtitle: "Complete Voyage Log",
-    accentColor: "#C85A2B",
+    id: "all",
+    label: "ALL",
+    tagline: "All Expeditions",
+    icon: "compass",
   },
   {
-    id: "The Last Outpost",
-    label: "THE LAST OUTPOST",
-    shortLabel: "LAST OUTPOST",
-    subtitle: "Technical Frontier // Day 01",
-    icon: "/images/worlds/outpost.webp",
-    accentColor: WORLD_CONFIG["The Last Outpost"].color,
+    id: "technical",
+    label: "TECHNICAL",
+    tagline: "Code, Bots & Flight",
+    icon: "technical",
   },
   {
-    id: "Pandemonium",
-    label: "PANDEMONIUM",
-    shortLabel: "PANDEMONIUM",
-    subtitle: "Robotics & Tech // Day 02",
-    icon: "/images/worlds/pandemonium.webp",
-    accentColor: WORLD_CONFIG["Pandemonium"].color,
-  },
-  {
-    id: "The Carnival Island",
-    label: "THE CARNIVAL ISLAND",
-    shortLabel: "CARNIVAL ISLAND",
-    subtitle: "Cultural Spectacle // Day 03",
-    icon: "/images/worlds/carnival.webp",
-    accentColor: WORLD_CONFIG["The Carnival Island"].color,
+    id: "cultural",
+    label: "CULTURAL",
+    tagline: "Music, Choreo & Lights",
+    icon: "cultural",
   },
 ]
 
 export function EventFilters({
+  activeWorld: propActiveWorld,
   activeFilter,
+  onSelectWorld,
   onSelectFilter,
+  worldCounts,
   counts,
+  activeCategory = "all",
+  onSelectCategory,
+  categoryCounts,
   searchQuery,
   onSearchChange,
 }: EventFiltersProps) {
+  const { theme: currentTheme } = useWorldTheme()
+
+  const currentWorld = propActiveWorld ?? activeFilter ?? "ALL"
+  const handleWorldSelect = onSelectWorld ?? onSelectFilter ?? (() => {})
+  const currentWorldCounts = worldCounts ?? counts ?? {
+    ALL: 0,
+    "The Last Outpost": 0,
+    Pandemonium: 0,
+    "The Carnival Island": 0,
+  }
+
   return (
-    <div className="w-full space-y-5">
-      {/* Search & World Filter Bar Container */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        {/* World Filter Buttons */}
+    <div className="w-full space-y-6">
+      {/* ─── ROW 1: WORLD DESTINATION SELECTOR & SEARCH ──────────── */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        {/* World Filter Navigation Tabs */}
         <div
           role="tablist"
-          aria-label="Event destination filter"
-          className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 sm:gap-3"
+          aria-label="Event world destination selector"
+          className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 sm:gap-2.5"
         >
-          {FILTER_ITEMS.map((item) => {
-            const isActive = activeFilter === item.id
-            const count = counts[item.id] ?? 0
+          {WORLD_ITEMS.map((item) => {
+            const isActive = currentWorld === item.id
+            const count = currentWorldCounts[item.id] ?? 0
 
             return (
               <button
@@ -82,52 +105,65 @@ export function EventFilters({
                 role="tab"
                 aria-selected={isActive}
                 type="button"
-                onClick={() => onSelectFilter(item.id)}
-                className={`group relative flex shrink-0 cursor-pointer items-center gap-2.5 rounded-xs border px-3.5 py-2.5 text-xs font-bold tracking-[0.12em] uppercase transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C85A2B] select-none ${
+                onClick={() => handleWorldSelect(item.id)}
+                className={`group relative flex shrink-0 cursor-pointer items-center gap-2 rounded-xs border px-3.5 py-2 text-xs font-bold tracking-[0.14em] uppercase select-none transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
                   isActive
-                    ? "border-[#082B3A] bg-[#082B3A] text-[#F4E8D1] shadow-md shadow-[#082B3A]/20"
-                    : "border-[#D8C7A8] bg-[#F7EEDD]/80 text-[#082B3A] hover:border-[#C85A2B]/60 hover:bg-[#F2E5C9]"
+                    ? "border-[#173847] bg-[#173847] text-[#F4E8D1] shadow-md shadow-[#173847]/20"
+                    : "border-[#D8C7A8] bg-[#F7EEDD]/90 text-[#173847] hover:border-[#173847]/40 hover:bg-[#F2E5C9]"
                 }`}
               >
-                {/* World Icon or Dot */}
-                {item.icon ? (
-                  <div className="relative h-4 w-4 shrink-0 overflow-hidden rounded-full">
+                {/* World Icon or Active Indicator Dot */}
+                {item.motifs.icon && item.id !== "ALL" ? (
+                  <div
+                    className={`relative h-4 w-4 shrink-0 overflow-hidden rounded-full border transition-all duration-300 ${
+                      isActive
+                        ? "border-[var(--theme-accent)] shadow-[0_0_8px_var(--theme-glow)]"
+                        : "border-transparent opacity-85 group-hover:opacity-100"
+                    }`}
+                  >
                     <Image
-                      src={item.icon}
+                      src={item.motifs.icon}
                       alt=""
                       fill
+                      sizes="16px"
                       className="object-cover"
                     />
                   </div>
                 ) : (
                   <span
-                    className="h-2 w-2 rounded-full transition-transform duration-300 group-hover:scale-125"
+                    className="h-2 w-2 rounded-full transition-all duration-300 group-hover:scale-125"
                     style={{
-                      backgroundColor: isActive ? "#C85A2B" : item.accentColor,
+                      backgroundColor: isActive ? item.colors.accent : "rgba(23, 56, 71, 0.4)",
+                      boxShadow: isActive ? `0 0 8px ${item.colors.glow}` : "none",
                     }}
                     aria-hidden="true"
                   />
                 )}
 
                 {/* Filter Label */}
-                <span className="whitespace-nowrap">{item.shortLabel}</span>
+                <span className="whitespace-nowrap transition-colors duration-200">
+                  {item.shortLabel}
+                </span>
 
                 {/* Count Badge */}
                 <span
-                  className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold transition-colors duration-200 ${
+                  className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1.5 font-mono text-[9.5px] font-semibold transition-colors duration-200 ${
                     isActive
-                      ? "bg-[#F4E8D1] text-[#082B3A]"
-                      : "bg-[#082B3A]/10 text-[#082B3A]"
+                      ? "bg-[#F4E8D1] text-[#173847]"
+                      : "bg-[#173847]/10 text-[#173847]"
                   }`}
                 >
                   {count}
                 </span>
 
-                {/* Active Indicator Underline */}
+                {/* Active Indicator Underline - Theme-Specific Accent Bar */}
                 {isActive && (
                   <span
-                    className="absolute bottom-0 left-3 right-3 h-[2px]"
-                    style={{ backgroundColor: item.accentColor }}
+                    className="absolute bottom-0 left-3 right-3 h-[2.5px] rounded-full transition-all duration-300"
+                    style={{
+                      backgroundColor: item.colors.tabUnderline,
+                      boxShadow: `0 0 10px ${item.colors.glow}`,
+                    }}
                     aria-hidden="true"
                   />
                 )}
@@ -137,8 +173,8 @@ export function EventFilters({
         </div>
 
         {/* Quick Search Input */}
-        <div className="relative w-full md:w-64">
-          <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[#70583E]">
+        <div className="relative w-full sm:w-72 lg:w-64">
+          <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[#70583E] transition-colors duration-300">
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -159,21 +195,140 @@ export function EventFilters({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search logbook..."
-            aria-label="Search events"
-            className="w-full rounded-xs border border-[#D8C7A8] bg-[#F7EEDD]/90 py-2 pr-3 pl-8 text-xs text-[#082B3A] placeholder-[#8C7355] transition-colors duration-200 focus:border-[#C85A2B] focus:bg-[#FFF9EE] focus:outline-none focus:ring-1 focus:ring-[#C85A2B]"
+            placeholder={`Search ${currentTheme.shortLabel.toLowerCase()} logs...`}
+            aria-label="Search events logbook"
+            className="w-full rounded-xs border border-[#D8C7A8] bg-[#F7EEDD]/90 py-2 pr-7 pl-8 text-xs text-[#173847] placeholder-[#8C7355] transition-all duration-200 focus:border-[var(--theme-accent)] focus:bg-[#FFF9EE] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent)]"
           />
 
           {searchQuery && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="absolute inset-y-0 right-2.5 flex items-center text-xs text-[#70583E] hover:text-[#082B3A]"
+              className="absolute inset-y-0 right-2.5 flex items-center text-xs text-[#70583E] transition-colors duration-200 hover:text-[var(--theme-accent)] cursor-pointer"
               aria-label="Clear search"
             >
               ✕
             </button>
           )}
+        </div>
+      </div>
+
+      {/* ─── ROW 2: EXPEDITION CATEGORY SELECTOR (TECHNICAL VS CULTURAL) ── */}
+      <div className="flex flex-col items-center justify-center pt-2">
+        {/* Subtle Archival Eyebrow Title */}
+        <div className="mb-2.5 flex items-center gap-3 text-center">
+          <div className="h-px w-8 bg-[var(--theme-border)]" />
+          <span className="font-mono text-[10px] font-bold tracking-[0.26em] text-[#70583E] uppercase">
+            EXPLORE THE VOYAGE
+          </span>
+          <div className="h-px w-8 bg-[var(--theme-border)]" />
+        </div>
+
+        {/* Tactical Category Filter Bar */}
+        <div
+          role="tablist"
+          aria-label="Expedition discipline category filter"
+          className="inline-flex items-center rounded-xs border border-[#D8C7A8] bg-[#F7EEDD]/90 p-1 shadow-xs transition-colors duration-300"
+        >
+          {CATEGORY_ITEMS.map((cat) => {
+            const isActive = activeCategory === cat.id
+            const count = categoryCounts ? categoryCounts[cat.id] : undefined
+
+            return (
+              <button
+                key={cat.id}
+                role="tab"
+                aria-selected={isActive}
+                type="button"
+                onClick={() => onSelectCategory?.(cat.id)}
+                className={`group relative flex items-center gap-2 rounded-xs px-4 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] cursor-pointer select-none ${
+                  isActive
+                    ? "border border-[#173847] bg-[#173847] text-[#F4E8D1] shadow-xs"
+                    : "border border-transparent text-[#173847] hover:bg-[#EFE3CD]/80 hover:text-[var(--theme-primary)]"
+                }`}
+              >
+                {/* Discipline Icon */}
+                <span className="shrink-0 transition-transform duration-300 group-hover:scale-110">
+                  {cat.icon === "compass" && (
+                    <svg
+                      className="h-3.5 w-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" opacity="0.3" />
+                    </svg>
+                  )}
+
+                  {cat.icon === "technical" && (
+                    <svg
+                      className="h-3.5 w-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+
+                  {cat.icon === "cultural" && (
+                    <svg
+                      className="h-3.5 w-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M9 18V5l12-2v13" />
+                      <circle cx="6" cy="18" r="3" />
+                      <circle cx="18" cy="16" r="3" />
+                    </svg>
+                  )}
+                </span>
+
+                {/* Label */}
+                <span className="whitespace-nowrap">{cat.label}</span>
+
+                {/* Optional Count */}
+                {typeof count === "number" && (
+                  <span
+                    className={`ml-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1.5 font-mono text-[9px] font-semibold transition-colors duration-200 ${
+                      isActive
+                        ? "bg-[#F4E8D1] text-[#173847]"
+                        : "bg-[#173847]/10 text-[#173847]"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+
+                {/* Active Underline - Theme-Specific Accent Bar */}
+                {isActive && (
+                  <span
+                    className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full transition-all duration-300"
+                    style={{
+                      backgroundColor: "var(--theme-accent)",
+                      boxShadow: "0 0 8px var(--theme-glow)",
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>

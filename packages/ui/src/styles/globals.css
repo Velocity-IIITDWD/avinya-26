@@ -26,6 +26,22 @@
     --color-sidebar-primary: var(--sidebar-primary);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar: var(--sidebar);
+    --color-theme-background: var(--theme-background);
+    --color-theme-primary: var(--theme-primary);
+    --color-theme-accent: var(--theme-accent);
+    --color-theme-accent-soft: var(--theme-accent-soft);
+    --color-theme-secondary-accent: var(--theme-secondary-accent);
+    --color-theme-border: var(--theme-border);
+    --color-theme-muted: var(--theme-muted);
+    --color-theme-muted-foreground: var(--theme-muted-foreground);
+    --color-theme-card: var(--theme-card);
+    --color-theme-card-hover-border: var(--theme-card-hover-border);
+    --color-theme-glow: var(--theme-glow);
+    --color-world-bg: var(--world-bg);
+    --color-world-primary: var(--world-primary);
+    --color-world-accent: var(--world-accent);
+    --color-world-border: var(--world-border);
+    --color-world-muted: var(--world-muted);
     --color-chart-5: var(--chart-5);
     --color-chart-4: var(--chart-4);
     --color-chart-3: var(--chart-3);
@@ -59,6 +75,29 @@
 }
 
 :root {
+    --theme-background: #FAF3E3;
+    --theme-primary: #173847;
+    --theme-accent: #C85A2B;
+    --theme-accent-soft: rgba(200, 90, 43, 0.12);
+    --theme-secondary-accent: #C5A059;
+    --theme-border: rgba(6, 42, 58, 0.16);
+    --theme-muted: #E8D9BD;
+    --theme-muted-foreground: #47606B;
+    --theme-card: #FAF3E3;
+    --theme-card-hover-border: rgba(200, 90, 43, 0.6);
+    --theme-glow: rgba(200, 90, 43, 0.2);
+    --theme-tab-active-bg: #173847;
+    --theme-tab-active-text: #F4E8D1;
+    --theme-tab-underline: #C85A2B;
+    --theme-badge-bg: rgba(200, 90, 43, 0.12);
+    --theme-badge-text: #C85A2B;
+
+    --world-bg: var(--theme-background);
+    --world-primary: var(--theme-primary);
+    --world-accent: var(--theme-accent);
+    --world-border: var(--theme-border);
+    --world-muted: var(--theme-muted);
+
     --background: #F4E8D1;
     --foreground: #062A3A;
     --card: #F8EFE0;
@@ -177,4 +216,169 @@
   text-transform: uppercase;
   font-family: var(--font-mono), monospace;
   font-size: 0.6875rem;
+}
+
+/* Dynamic World Theme Transitions */
+.world-theme-transition {
+  transition: background-color 450ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 450ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 300ms ease,
+              box-shadow 450ms ease;
+}
+
+/* Floating Decorative Elements (5-8s duration, translateY 0 -> -8px -> 0) */
+@keyframes voyage-float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes voyage-float-alt {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1deg);
+  }
+}
+
+@keyframes voyage-float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-voyage-float {
+  animation: voyage-float-slow 6.5s ease-in-out infinite;
+}
+
+.animate-voyage-float-alt {
+  animation: voyage-float-alt 7.8s ease-in-out infinite 1.2s;
+}
+
+.animate-voyage-float-gentle {
+  animation: voyage-float-gentle 5.4s ease-in-out infinite 0.6s;
+}
+
+/* Slow Technical Geometry Rotation (Pandemonium 30-40s) */
+@keyframes slow-geometry-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slow-spin {
+  animation: slow-geometry-spin 35s linear infinite;
+}
+
+.animate-slow-spin-reverse {
+  animation: slow-geometry-spin 45s linear infinite reverse;
+}
+
+/* Scan line sweep (Last Outpost 20-30s) */
+@keyframes radar-scan-sweep {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.65;
+  }
+  85% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translateY(140%);
+    opacity: 0;
+  }
+}
+
+.animate-radar-scan {
+  animation: radar-scan-sweep 24s ease-in-out infinite;
+}
+
+/* Atmospheric Ambient Particles (Drift & Twinkle) */
+@keyframes ambient-particle-drift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(6px, -14px) scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+.animate-particle-drift-1 {
+  animation: ambient-particle-drift 22s ease-in-out infinite;
+}
+
+.animate-particle-drift-2 {
+  animation: ambient-particle-drift 28s ease-in-out infinite 4s;
+}
+
+.animate-particle-drift-3 {
+  animation: ambient-particle-drift 18s ease-in-out infinite 8s;
+}
+
+/* Star Twinkle (Carnival Island) */
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
+
+.animate-star-twinkle {
+  animation: star-twinkle 6s ease-in-out infinite;
+}
+
+/* Paper Light Sweep on Card Hover */
+@keyframes paper-light-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-paper-light-sweep {
+  animation: paper-light-sweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-voyage-float,
+  .animate-voyage-float-alt,
+  .animate-voyage-float-gentle,
+  .animate-slow-spin,
+  .animate-slow-spin-reverse,
+  .animate-radar-scan,
+  .animate-particle-drift-1,
+  .animate-particle-drift-2,
+  .animate-particle-drift-3,
+  .animate-star-twinkle,
+  .animate-paper-light-sweep {
+    animation: none !important;
+    transform: none !important;
+  }
 }

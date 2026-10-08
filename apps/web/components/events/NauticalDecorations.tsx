@@ -16,10 +16,10 @@ export function AvinyaSailIcon({
 }) {
   const src =
     variant === "navy"
-      ? "/images/avinya-sail-navy.png"
+      ? "/images/avinya-sail-navy.webp"
       : variant === "cream"
-        ? "/images/avinya-sail-cream.png"
-        : "/images/avinya-sail-orange.png"
+        ? "/images/avinya-sail-cream.webp"
+        : "/images/avinya-sail-orange.webp"
 
   return (
     <div

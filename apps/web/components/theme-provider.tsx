@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
+import { WorldThemeProvider } from "@/lib/theme"
 
 function ThemeProvider({
   children,
@@ -16,7 +17,7 @@ function ThemeProvider({
       {...props}
     >
       <ThemeHotkey />
-      {children}
+      <WorldThemeProvider>{children}</WorldThemeProvider>
     </NextThemesProvider>
   )
 }

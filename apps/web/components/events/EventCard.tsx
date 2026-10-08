@@ -1,8 +1,10 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useRef } from "react"
 import Image from "next/image"
 import { EventData, WORLD_CONFIG } from "@/data/events"
+import { useWorldTheme } from "@/lib/theme"
+import { useCardTilt } from "@/hooks/useCardTilt"
 import {
   AvinyaSailIcon,
   CompassRoseMini,
@@ -15,6 +17,8 @@ export interface EventCardProps {
   onExplore?: (event: EventData) => void
   priority?: boolean
   className?: string
+  isDimmed?: boolean
+  onHoverStateChange?: (hovered: boolean) => void
 }
 
 export function EventCard({
@@ -22,312 +26,331 @@ export function EventCard({
   onExplore,
   priority = false,
   className = "",
+  isDimmed = false,
+  onHoverStateChange,
 }: EventCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [rotate, setRotate] = useState({ x: 0, y: 0 })
+  const imageRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const accentLineRef = useRef<HTMLDivElement>(null)
+
   const [isHovered, setIsHovered] = useState(false)
-  const [supportsTilt, setSupportsTilt] = useState(true)
+  const { theme } = useWorldTheme()
 
-  const worldConfig = WORLD_CONFIG[event.world] || {
-    name: event.world,
-    day: event.day,
-    color: "#C85A2B",
-    accentBg: "rgba(200, 90, 43, 0.12)",
-    icon: "/images/worlds/outpost.webp",
-  }
-
-  // Detect touch devices and prefers-reduced-motion
-  useEffect(() => {
-    const isTouch =
-      typeof window !== "undefined" &&
-      (window.matchMedia("(pointer: coarse)").matches ||
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0)
-
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
-    if (isTouch || prefersReducedMotion) {
-      setSupportsTilt(false)
-    }
-  }, [])
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!supportsTilt || !cardRef.current) return
-
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-
-    // Maximum tilt between -2.5 and +2.5 degrees for an elegant, restrained feel
-    const rotateX = ((y - centerY) / centerY) * -2.8
-    const rotateY = ((x - centerX) / centerX) * 2.8
-
-    setRotate({ x: rotateX, y: rotateY })
-  }
+  // 3D Mouse Tilt & Internal Parallax via GSAP quickTo
+  const { onMouseEnter: handleMouseEnterTilt, onMouseMove, onMouseLeave: handleMouseLeaveTilt } =
+    useCardTilt({
+      cardRef,
+      imageRef,
+      titleRef,
+      accentLineRef,
+    })
 
   const handleMouseEnter = () => {
     setIsHovered(true)
+    onHoverStateChange?.(true)
+    handleMouseEnterTilt()
   }
 
   const handleMouseLeave = () => {
     setIsHovered(false)
-    setRotate({ x: 0, y: 0 })
+    onHoverStateChange?.(false)
+    handleMouseLeaveTilt()
   }
 
-  const cardTransform = supportsTilt
-    ? `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) translateY(${
-        isHovered ? "-6px" : "0px"
-      })`
-    : isHovered
-      ? "translateY(-4px)"
-      : "translateY(0px)"
-
   return (
-    <article
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transform: cardTransform,
-        transition: isHovered
-          ? "transform 150ms cubic-bezier(0.2, 0, 0, 1), box-shadow 350ms ease, border-color 350ms ease"
-          : "transform 450ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms ease, border-color 450ms ease",
-      }}
-      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-md border border-[#D5C6A6] bg-[#FAF3E3] p-5 sm:p-6 text-[#082B3A] shadow-[0_4px_20px_-4px_rgba(8,43,58,0.08)] hover:border-[#C85A2B]/60 hover:shadow-[0_20px_35px_-10px_rgba(8,43,58,0.22)] will-change-transform ${className}`}
+    <div
+      className={`group event-card-item relative h-full select-none transition-opacity duration-300 ${
+        isDimmed ? "opacity-[0.86]" : "opacity-100"
+      } ${className}`}
     >
-      {/* ─── VINTAGE PARCHMENT PAPER TEXTURE OVERLAY ─────────── */}
+      {/* ─── PHYSICAL SECONDARY BACKING LAYER (EXPEDITION DEPTH) ─── */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-50"
-        style={{
-          backgroundImage: "url('/images/parchment-texture.webp')",
-          backgroundSize: "320px 320px",
-          backgroundRepeat: "repeat",
-        }}
+        className="pointer-events-none absolute inset-0 rounded-md border border-[#D5C6A6]/80 bg-[#ECE0C6] shadow-xs transition-transform duration-500 ease-out translate-x-1.5 translate-y-2 group-hover:translate-x-2 group-hover:translate-y-3.5 group-hover:opacity-90"
         aria-hidden="true"
       />
 
-      {/* ─── SUBTLE TOP NAVIGATIONAL ENGRAVED LINE ─────────────── */}
-      <div
-        className="pointer-events-none absolute top-0 left-0 right-0 h-[3px] transition-colors duration-500"
+      {/* ─── PRIMARY EXPEDITION CARD WITH GSAP 3D HOVER TILT ─── */}
+      <article
+        ref={cardRef}
+        onMouseMove={onMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="relative z-10 flex h-full flex-col justify-between overflow-hidden rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)] p-5 sm:p-6 text-[var(--theme-primary)] shadow-[0_4px_18px_-4px_rgba(23,56,71,0.08)] hover:border-[var(--theme-card-hover-border)] hover:shadow-[0_22px_45px_-12px_var(--theme-glow)] will-change-transform transition-[border-color,box-shadow,background-color] duration-300"
         style={{
-          backgroundColor: isHovered ? worldConfig.color : "transparent",
+          transformStyle: "preserve-3d",
         }}
-        aria-hidden="true"
-      />
+      >
+        {/* ─── VINTAGE PARCHMENT PAPER TEXTURE OVERLAY ─────────── */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-50"
+          style={{
+            backgroundImage: "url('/images/parchment-texture.webp')",
+            backgroundSize: "320px 320px",
+            backgroundRepeat: "repeat",
+          }}
+          aria-hidden="true"
+        />
 
-      {/* ─── NAUTICAL FOLIO CORNER NOTCHES ──────────────────────── */}
-      <NauticalCornerNotches color="#BCA985" className="z-10" />
+        {/* ─── SUBTLE PAPER-LIGHT SWEEP EFFECT ─────────────────────── */}
+        <div
+          className="pointer-events-none absolute inset-0 z-20 overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          aria-hidden="true"
+        >
+          <div className="absolute inset-y-0 -left-48 w-40 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] group-hover:animate-paper-light-sweep" />
+        </div>
 
-      {/* ─── CARD CONTENT WRAPPER ───────────────────────────────── */}
-      <div className="relative z-10 flex flex-1 flex-col">
-        {/* ─── HEADER: AVINYA SAIL + WORLD BADGE + LOG NO ─────────── */}
-        <header className="mb-3.5 flex items-center justify-between border-b border-[#E2D4B7] pb-2.5">
-          <div className="flex items-center gap-2">
-            {/* Official Avinya Maritime Sail Icon */}
-            <div className="relative flex shrink-0 items-center justify-center transition-transform duration-500 group-hover:rotate-[-6deg] group-hover:scale-110">
-              <AvinyaSailIcon variant="navy" size={24} alt="Avinya Sail" />
+        {/* ─── ANIMATED TOP ENGRAVED ACCENT LINE (GSAP TRANSFORM) ──── */}
+        <div
+          ref={accentLineRef}
+          className="pointer-events-none absolute top-0 left-0 right-0 h-[3px] origin-center scale-x-0"
+          style={{
+            backgroundColor: "var(--theme-accent)",
+            boxShadow: "0 0 10px var(--theme-glow)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ─── NAUTICAL FOLIO CORNER NOTCHES ──────────────────────── */}
+        <NauticalCornerNotches
+          color={isHovered ? "var(--theme-accent)" : "var(--theme-border)"}
+          className="z-10 transition-colors duration-300"
+        />
+
+        {/* ─── CARD CONTENT WRAPPER ───────────────────────────────── */}
+        <div className="relative z-10 flex flex-1 flex-col">
+          {/* ─── HEADER: INDEPENDENT ARTWORK/ICON + BADGE + LOG NO ── */}
+          <header className="mb-3.5 flex items-center justify-between border-b border-[var(--theme-border)] pb-2.5 transition-colors duration-400">
+            <div className="flex items-center gap-2">
+              {/* Official Avinya Maritime Sail Icon - Moves Independently */}
+              <div className="relative flex shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover:rotate-[-8deg] group-hover:scale-110">
+                <AvinyaSailIcon variant="navy" size={24} alt="Avinya Sail" />
+              </div>
+
+              <div className="flex flex-col">
+                <span className="font-mono text-[9px] font-semibold tracking-[0.25em] text-[var(--theme-accent)] uppercase transition-colors duration-300">
+                  {event.logNumber}
+                </span>
+                <span className="text-[10px] font-bold tracking-[0.14em] text-[var(--theme-primary)]/80 uppercase">
+                  {event.displayCategory || event.category}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col">
-              <span className="font-mono text-[9px] font-semibold tracking-[0.25em] text-[#C85A2B] uppercase">
-                {event.logNumber}
-              </span>
-              <span className="text-[10px] font-bold tracking-[0.16em] text-[#082B3A]/80 uppercase">
+            {/* World Badge with World Accent & Category Tag */}
+            <div className="flex items-center gap-1.5">
+              {/* Category Pill Tag */}
+              <span
+                className={`rounded-xs px-2 py-0.5 font-mono text-[8.5px] font-bold tracking-wider uppercase border transition-colors duration-300 ${
+                  event.category === "technical"
+                    ? "border-[var(--theme-accent)]/40 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"
+                    : "border-[#C5A059]/40 bg-[#C5A059]/15 text-[#8E6D24]"
+                }`}
+              >
                 {event.category}
               </span>
+
+              {/* World Realm Marker */}
+              <div className="flex items-center gap-1 rounded-full border border-[var(--theme-border)] bg-[var(--theme-accent-soft)] px-2 py-0.5 shadow-xs transition-colors duration-300 group-hover:border-[var(--theme-accent)]/50">
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full transition-colors duration-300"
+                  style={{ backgroundColor: "var(--theme-accent)" }}
+                  aria-hidden="true"
+                />
+                <span className="text-[9px] font-semibold tracking-wider text-[var(--theme-primary)] uppercase">
+                  {event.world.replace("The ", "")}
+                </span>
+              </div>
             </div>
+          </header>
+
+          {/* ─── EVENT TITLE (WITH GSAP INTERNAL PARALLAX) ─────────── */}
+          <div className="mb-3">
+            <h3
+              ref={titleRef}
+              className="font-serif text-[1.28rem] font-bold tracking-[0.03em] leading-snug text-[var(--theme-primary)] transition-colors duration-300 group-hover:text-[var(--theme-accent)] will-change-transform"
+            >
+              {event.title}
+            </h3>
+            {event.subtitle && (
+              <p className="mt-0.5 text-[11px] font-medium tracking-wide text-[#70583E]">
+                {event.subtitle}
+              </p>
+            )}
           </div>
 
-          {/* World Badge with World Icon & Coordinates */}
-          <div className="flex items-center gap-1.5 rounded-full border border-[#D8C7A8] bg-[#F3E7CF]/80 px-2.5 py-0.5 shadow-xs transition-colors duration-300 group-hover:border-[#C85A2B]/40">
-            <span
-              className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: worldConfig.color }}
+          {/* ─── EVENT ARTWORK / IMAGE CONTAINER (CLIPPED + GSAP PARALLAX) ─── */}
+          <div
+            ref={imageRef}
+            className="relative mb-3.5 aspect-[16/10] w-full overflow-hidden rounded-xs border border-[var(--theme-border)] bg-[#173847] shadow-inner transition-colors duration-300 will-change-transform"
+          >
+            <Image
+              src={event.image}
+              alt={event.title}
+              width={800}
+              height={500}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="h-full w-full object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.045]"
+              priority={priority}
+              loading={priority ? undefined : "lazy"}
+            />
+
+            {/* Calm State Gradient Scrim */}
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-[#173847]/75 via-[#173847]/15 to-transparent transition-opacity duration-500 group-hover:opacity-35"
               aria-hidden="true"
             />
-            <span className="text-[9.5px] font-semibold tracking-wider text-[#082B3A] uppercase">
-              {event.world.replace("The ", "")}
-            </span>
-          </div>
-        </header>
 
-        {/* ─── EVENT TITLE ─────────────────────────────────────────── */}
-        <div className="mb-3">
-          <h3 className="font-serif text-[1.28rem] font-bold tracking-[0.03em] leading-snug text-[#082B3A] transition-colors duration-300 group-hover:text-[#C85A2B]">
-            {event.title}
-          </h3>
-          {event.subtitle && (
-            <p className="mt-0.5 text-[11px] font-medium tracking-wide text-[#70583E]">
-              {event.subtitle}
-            </p>
-          )}
-        </div>
+            {/* Layered Nautical Hover Reveal Scrim */}
+            <div
+              className="absolute inset-0 flex flex-col justify-between p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(23, 56, 71, 0.94) 0%, rgba(23, 56, 71, 0.50) 60%, rgba(23, 56, 71, 0.30) 100%)",
+              }}
+            >
+              {/* Top row in reveal: coordinates watermark & compass badge */}
+              <div className="flex items-center justify-between text-[#F4E8D1]">
+                <span className="font-mono text-[9px] tracking-widest text-[#E3D1B1] opacity-90">
+                  {event.coordinates}
+                </span>
+                <div className="rounded-full bg-[#FAF3E3]/20 p-1 backdrop-blur-xs transition-transform duration-500 group-hover:rotate-45">
+                  <CompassRoseMini size={18} className="text-[#F4E8D1]" />
+                </div>
+              </div>
 
-        {/* ─── EVENT ARTWORK / IMAGE CONTAINER ────────────────────── */}
-        <div className="relative mb-3.5 aspect-16/10 w-full overflow-hidden rounded-xs border border-[#DECDB0] bg-[#082B3A] shadow-inner">
-          <Image
-            src={event.image}
-            alt={event.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-108"
-            priority={priority}
-          />
+              {/* Bottom reveal stats */}
+              <div className="flex items-end justify-between text-[#F4E8D1]">
+                {event.prizePool && (
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-semibold tracking-wider text-[#D8C7A8] uppercase">
+                      Prize Bounty
+                    </span>
+                    <span className="font-serif text-sm font-bold text-[#FFF4D6]">
+                      {event.prizePool}
+                    </span>
+                  </div>
+                )}
 
-          {/* Calm State Gradient Scrim */}
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-[#082B3A]/70 via-[#082B3A]/15 to-transparent transition-opacity duration-500 group-hover:opacity-40"
-            aria-hidden="true"
-          />
-
-          {/* Layered Nautical Hover Reveal Scrim */}
-          <div
-            className="absolute inset-0 flex flex-col justify-between p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(8, 43, 58, 0.92) 0%, rgba(8, 43, 58, 0.45) 60%, rgba(8, 43, 58, 0.25) 100%)",
-            }}
-          >
-            {/* Top row in reveal: coordinates watermark & sail badge */}
-            <div className="flex items-center justify-between text-[#F4E8D1]">
-              <span className="font-mono text-[9px] tracking-widest text-[#E3D1B1] opacity-90">
-                {event.coordinates}
-              </span>
-              <div className="rounded-full bg-[#FAF3E3]/20 p-1 backdrop-blur-xs">
-                <CompassRoseMini size={18} className="text-[#F4E8D1]" />
+                {event.teamSize && (
+                  <div className="flex flex-col text-right">
+                    <span className="text-[9px] font-semibold tracking-wider text-[#D8C7A8] uppercase">
+                      Expedition Crew
+                    </span>
+                    <span className="text-xs font-semibold text-[#FFF4D6]">
+                      {event.teamSize}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Bottom reveal stats */}
-            <div className="flex items-end justify-between text-[#F4E8D1]">
-              {event.prizePool && (
-                <div className="flex flex-col">
-                  <span className="text-[9px] font-semibold tracking-wider text-[#D8C7A8] uppercase">
-                    Prize Bounty
+            {/* Watermark emblem bottom right */}
+            <div className="pointer-events-none absolute bottom-2 right-2 z-10 opacity-60 transition-opacity duration-300 group-hover:opacity-0">
+              <AvinyaSailIcon variant="cream" size={18} alt="" />
+            </div>
+
+            {/* Featured Ribbon Badge */}
+            {event.featured && (
+              <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-xs bg-[var(--theme-accent)] px-2 py-0.5 text-[9px] font-bold tracking-widest text-[#FAF3E3] uppercase shadow-sm transition-colors duration-300">
+                <span>★</span>
+                <span>FLAGSHIP</span>
+              </div>
+            )}
+          </div>
+
+          {/* ─── DESCRIPTION (LOG SUMMARY) ──────────────────────────── */}
+          <p className="mb-4 text-xs leading-relaxed text-[#334D57] line-clamp-2">
+            {event.description}
+          </p>
+
+          {/* ─── SHIP'S LOG METADATA GRID (DATE, TIME, VENUE) ───────── */}
+          <div className="mt-auto rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/40 p-2.5 transition-colors duration-400 group-hover:bg-[var(--theme-accent-soft)]/60">
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              {/* Date & Day */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+                  📅
+                </span>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[9px] font-semibold tracking-wider text-[var(--theme-muted-foreground)] uppercase">
+                    Voyage Date
                   </span>
-                  <span className="font-serif text-sm font-bold text-[#FFF4D6]">
-                    {event.prizePool}
+                  <span className="font-semibold text-[var(--theme-primary)]">
+                    {event.date}
                   </span>
                 </div>
-              )}
+              </div>
 
-              {event.teamSize && (
-                <div className="flex flex-col text-right">
-                  <span className="text-[9px] font-semibold tracking-wider text-[#D8C7A8] uppercase">
-                    Expedition Crew
+              {/* Time */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+                  ⏱
+                </span>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[9px] font-semibold tracking-wider text-[var(--theme-muted-foreground)] uppercase">
+                    Time
                   </span>
-                  <span className="text-xs font-semibold text-[#FFF4D6]">
-                    {event.teamSize}
+                  <span className="font-semibold text-[var(--theme-primary)]">
+                    {event.time.split(" ")[0]} {event.time.split(" ")[1]}
                   </span>
                 </div>
-              )}
+              </div>
+            </div>
+
+            {/* Venue (Port of Call) */}
+            <div className="mt-2 flex items-center gap-2 border-t border-[var(--theme-border)] pt-1.5 text-[11px]">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+                📍
+              </span>
+              <div className="flex flex-col leading-tight truncate">
+                <span className="text-[9px] font-semibold tracking-wider text-[var(--theme-muted-foreground)] uppercase">
+                  Port of Call
+                </span>
+                <span className="font-semibold text-[var(--theme-primary)] truncate">
+                  {event.venue}
+                </span>
+              </div>
             </div>
           </div>
-
-          {/* Subtle Avinya watermark emblem bottom right */}
-          <div className="pointer-events-none absolute bottom-2 right-2 z-10 opacity-60 transition-opacity duration-300 group-hover:opacity-0">
-            <AvinyaSailIcon variant="cream" size={18} alt="" />
-          </div>
-
-          {/* Featured Ribbon Badge if applicable */}
-          {event.featured && (
-            <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-xs bg-[#C85A2B] px-2 py-0.5 text-[9px] font-bold tracking-widest text-[#FAF3E3] uppercase shadow-sm">
-              <span>★</span>
-              <span>FLAGSHIP</span>
-            </div>
-          )}
         </div>
 
-        {/* ─── DESCRIPTION (LOG SUMMARY) ──────────────────────────── */}
-        <p className="mb-4 text-xs leading-relaxed text-[#334D57] line-clamp-2">
-          {event.description}
-        </p>
-
-        {/* ─── SHIP'S LOG METADATA GRID (DATE, TIME, VENUE) ───────── */}
-        <div className="mt-auto rounded-xs border border-[#E4D7BE] bg-[#F5EAD3]/70 p-2.5 transition-colors duration-300 group-hover:bg-[#F3E6CD]">
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
-            {/* Date & Day */}
-            <div className="flex items-center gap-2">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[#082B3A]/10 text-[10px] text-[#082B3A]">
-                📅
-              </span>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[9px] font-semibold tracking-wider text-[#7A6348] uppercase">
-                  Voyage Date
-                </span>
-                <span className="font-semibold text-[#082B3A]">
-                  {event.date}
-                </span>
-              </div>
-            </div>
-
-            {/* Time */}
-            <div className="flex items-center gap-2">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[#082B3A]/10 text-[10px] text-[#082B3A]">
-                ⏱
-              </span>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[9px] font-semibold tracking-wider text-[#7A6348] uppercase">
-                  Time
-                </span>
-                <span className="font-semibold text-[#082B3A]">
-                  {event.time.split(" ")[0]} {event.time.split(" ")[1]}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Venue (Port of Call) */}
-          <div className="mt-2 flex items-center gap-2 border-t border-[#DECDB0] pt-1.5 text-[11px]">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[#082B3A]/10 text-[10px] text-[#082B3A]">
-              📍
+        {/* ─── FOOTER: NAUTICAL DIVIDER & EXPLORE ACTION ──────────── */}
+        <footer className="relative z-10 mt-4 border-t border-[var(--theme-border)] pt-3.5 transition-colors duration-400">
+          <div className="mb-2.5 flex items-center justify-between text-[#BBA680]">
+            <WaveDividerLine
+              width={70}
+              className="text-[var(--theme-accent)]/60 transition-all duration-500 group-hover:scale-x-110"
+            />
+            <span className="font-mono text-[9px] tracking-wider text-[#8A7154]">
+              {event.day.toUpperCase()}
             </span>
-            <div className="flex flex-col leading-tight truncate">
-              <span className="text-[9px] font-semibold tracking-wider text-[#7A6348] uppercase">
-                Port of Call
-              </span>
-              <span className="font-semibold text-[#082B3A] truncate">
-                {event.venue}
-              </span>
-            </div>
+            <WaveDividerLine
+              width={70}
+              className="text-[var(--theme-accent)]/60 transition-all duration-500 group-hover:scale-x-110"
+            />
           </div>
-        </div>
-      </div>
 
-      {/* ─── FOOTER: NAUTICAL DIVIDER & EXPLORE ACTION ──────────── */}
-      <footer className="relative z-10 mt-4 border-t border-[#E5D7BF] pt-3.5">
-        <div className="mb-2.5 flex items-center justify-between text-[#BBA680]">
-          <WaveDividerLine width={70} className="text-[#C85A2B]/60 transition-transform duration-500 group-hover:scale-x-110" />
-          <span className="font-mono text-[9px] tracking-wider text-[#8A7154]">
-            {event.day.toUpperCase()}
-          </span>
-          <WaveDividerLine width={70} className="text-[#C85A2B]/60 transition-transform duration-500 group-hover:scale-x-110" />
-        </div>
-
-        <button
-          type="button"
-          onClick={() => onExplore?.(event)}
-          aria-label={`Explore ${event.title}`}
-          className="relative flex w-full items-center justify-between overflow-hidden rounded-xs border border-[#082B3A] bg-[#082B3A] px-4 py-2.5 text-xs font-bold tracking-[0.16em] text-[#F4E8D1] uppercase transition-all duration-300 hover:bg-[#C85A2B] hover:border-[#C85A2B] hover:text-[#FFF4D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C85A2B] focus-visible:ring-offset-2 active:scale-[0.99] cursor-pointer shadow-xs"
-        >
-          <span className="flex items-center gap-2">
-            <span className="transition-transform duration-300 group-hover:rotate-12">🧭</span>
-            <span>Explore Destination</span>
-          </span>
-
-          <span
-            className="flex items-center text-sm transition-transform duration-300 ease-out group-hover:translate-x-1.5"
-            aria-hidden="true"
+          <button
+            type="button"
+            onClick={() => onExplore?.(event)}
+            aria-label={`Explore ${event.title}`}
+            className="group/btn relative flex w-full items-center justify-between overflow-hidden rounded-xs border border-[var(--theme-primary)] bg-[var(--theme-primary)] px-4 py-2.5 text-xs font-bold tracking-[0.16em] text-[#F4E8D1] uppercase transition-all duration-300 hover:bg-[var(--theme-accent)] hover:border-[var(--theme-accent)] hover:text-[#FFF4D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] focus-visible:ring-offset-2 active:scale-[0.99] cursor-pointer shadow-xs"
           >
-            →
-          </span>
-        </button>
-      </footer>
-    </article>
+            <span className="flex items-center gap-2">
+              <span className="transition-transform duration-300 group-hover/btn:rotate-45">🧭</span>
+              <span>EXPLORE EVENT</span>
+            </span>
+
+            <span
+              className="flex items-center text-sm transition-transform duration-300 ease-out group-hover/btn:translate-x-1.5"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </button>
+        </footer>
+      </article>
+    </div>
   )
 }

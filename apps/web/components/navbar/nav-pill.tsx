@@ -37,10 +37,10 @@ export function NavPill({ items, onItemClick, className = "" }: NavPillProps) {
             onClick={onItemClick}
             role="menuitem"
             aria-current={isActive ? "page" : undefined}
-            className={`group relative flex flex-col items-center justify-center px-4 py-1.5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-[#C85A2B] ${
+            className={`group relative flex flex-col items-center justify-center px-4 py-1.5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-[var(--theme-accent,#C85A2B)] ${
               isActive
-                ? "font-semibold text-[#C85A2B] dark:text-[#C85A2B]"
-                : "text-[#062A3A]/75 hover:text-[#C85A2B] dark:text-[#F2E5C9]/80 dark:hover:text-[#C85A2B]"
+                ? "font-semibold text-[var(--theme-accent,#C85A2B)]"
+                : "text-[#062A3A]/75 hover:text-[var(--theme-accent,#C85A2B)] dark:text-[#F2E5C9]/80 dark:hover:text-[var(--theme-accent,#C85A2B)]"
             }`}
           >
             {/* Primary Destination Label */}
@@ -62,7 +62,7 @@ export function NavPill({ items, onItemClick, className = "" }: NavPillProps) {
                   : "scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100"
               }`}
             >
-              <NauticalMarker className="text-[#C85A2B]" />
+              <NauticalMarker className="text-[var(--theme-accent,#C85A2B)]" />
             </div>
 
             {/* Subtle destination tooltip on hover */}

@@ -84,13 +84,13 @@ export function Navbar() {
           <div className="flex items-center gap-3 sm:gap-4">
             {/* Maritime Telemetry / Coordinates Badge (Desktop) */}
             <div
-              className={`hidden items-center gap-2.5 rounded-full border border-[#062A3A]/15 bg-[#F4E8D1]/85 px-3.5 py-1.5 text-[9px] tracking-[0.22em] text-[#062A3A]/75 uppercase backdrop-blur-sm transition-opacity duration-300 xl:flex dark:border-[#C85A2B]/30 dark:bg-[#062A3A]/85 dark:text-[#F2E5C9]/75 ${
+              className={`hidden items-center gap-2.5 rounded-full border border-[#062A3A]/15 bg-[#F4E8D1]/85 px-3.5 py-1.5 text-[9px] tracking-[0.22em] text-[#062A3A]/75 uppercase backdrop-blur-sm transition-all duration-300 xl:flex dark:border-[#C85A2B]/30 dark:bg-[#062A3A]/85 dark:text-[#F2E5C9]/75 ${
                 isMenuOpen ? "pointer-events-none opacity-0" : "opacity-100"
               }`}
             >
               <CompassRose
                 size={14}
-                className="compass-pulse shrink-0 text-[#C85A2B]"
+                className="compass-pulse shrink-0 text-[var(--theme-accent,#C85A2B)] transition-colors duration-300"
               />
               <span className="font-mono">15°29&apos;N 75°01&apos;E</span>
             </div>
