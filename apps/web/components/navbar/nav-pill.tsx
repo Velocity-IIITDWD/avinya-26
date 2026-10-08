@@ -3,7 +3,6 @@
 import React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { NauticalMarker } from "./nautical-icons"
 
 export interface NavItem {
   href: string
@@ -16,9 +15,15 @@ interface NavPillProps {
   items: NavItem[]
   onItemClick?: () => void
   className?: string
+  leading?: React.ReactNode
 }
 
-export function NavPill({ items, onItemClick, className = "" }: NavPillProps) {
+export function NavPill({
+  items,
+  onItemClick,
+  className = "",
+  leading,
+}: NavPillProps) {
   const pathname = usePathname()
 
   return (
@@ -27,6 +32,7 @@ export function NavPill({ items, onItemClick, className = "" }: NavPillProps) {
       role="menubar"
       aria-label="Maritime voyage navigation"
     >
+      {leading}
       {items.map((item) => {
         const isActive = pathname === item.href
 
@@ -54,17 +60,6 @@ export function NavPill({ items, onItemClick, className = "" }: NavPillProps) {
             >
               {item.label}
             </span>
-
-            {/* Nautical Waypoint Marker & Wave Indicator (Hover / Active) */}
-            <div
-              className={`mt-1 flex items-center justify-center transition-all duration-300 ${
-                isActive
-                  ? "scale-100 opacity-100"
-                  : "scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100"
-              }`}
-            >
-              <NauticalMarker className="text-[var(--theme-accent,#C85A2B)] transition-colors duration-400" />
-            </div>
 
             {/* Subtle destination tooltip on hover */}
             {item.voyageLabel && (
