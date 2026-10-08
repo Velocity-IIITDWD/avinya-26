@@ -143,7 +143,7 @@ export function ContactDispatch() {
             <div className="mt-8 flex items-center gap-4 border-t border-[#062A3A]/15 pt-4 dark:border-[#F4E8D1]/15">
               <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded">
                 <Image
-                  src="/images/spyglass-telescope.png"
+                  src="/images/spyglass-telescope.webp"
                   alt="Nautical Brass Spyglass"
                   fill
                   className="object-contain"

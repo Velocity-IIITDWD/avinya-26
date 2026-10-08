@@ -176,7 +176,7 @@ export function HeroVoyage() {
                 <div className="relative overflow-hidden rounded-lg border border-dashed border-[#062A3A]/40 dark:border-[#F4E8D1]/40">
                   <div className="relative aspect-[3/4] w-full">
                     <Image
-                      src="/images/brochure-page-1.png"
+                      src="/images/brochure-page-1.webp"
                       alt="Avinya Techno-Cultural Fest Poster - Life is a Voyage"
                       fill
                       priority

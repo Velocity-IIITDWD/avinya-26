@@ -87,7 +87,7 @@ export function AboutJournal() {
               <div className="mt-8 overflow-hidden rounded-lg border border-[#062A3A]/20 bg-[#EFE3C8] dark:border-[#F4E8D1]/20 dark:bg-[#041B26]">
                 <div className="relative aspect-[16/9] w-full">
                   <Image
-                    src="/images/campus-lithograph.png"
+                    src="/images/campus-lithograph.webp"
                     alt="IIIT Dharwad Campus Architecture Lithograph"
                     fill
                     className="object-cover object-bottom"
@@ -153,7 +153,7 @@ export function AboutJournal() {
               <div className="mt-4 overflow-hidden rounded-lg border border-[#062A3A]/20 bg-[#EFE3C8] dark:border-[#F4E8D1]/20 dark:bg-[#041B26]">
                 <div className="relative aspect-[16/7] w-full">
                   <Image
-                    src="/images/brochure-page-3.png"
+                    src="/images/brochure-page-3.webp"
                     alt="Avinya Techno-Cultural Celebration & Ocean Art"
                     fill
                     className="object-cover object-bottom"

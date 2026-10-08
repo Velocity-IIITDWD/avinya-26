@@ -228,12 +228,12 @@ export function NavOverlay({ isOpen, onClose, items }: NavOverlayProps) {
         <path
           d="M-50 150 Q 200 80, 250 350 T 400 650"
           fill="none"
-          stroke="#C85A2B"
+          stroke="var(--theme-accent,#C85A2B)"
           strokeWidth="1.5"
           strokeDasharray="4 6"
         />
-        <circle cx="250" cy="350" r="4" fill="#C85A2B" />
-        <circle cx="400" cy="650" r="4" fill="#C85A2B" />
+        <circle cx="250" cy="350" r="4" fill="var(--theme-accent,#C85A2B)" />
+        <circle cx="400" cy="650" r="4" fill="var(--theme-accent,#C85A2B)" />
       </svg>
 
       {/* Top Banner & Header Clearance */}
@@ -243,9 +243,9 @@ export function NavOverlay({ isOpen, onClose, items }: NavOverlayProps) {
       >
         <div className="flex items-center justify-between border-b border-[#062A3A]/15 pb-4 dark:border-[#F2E5C9]/15">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-[#C85A2B]" />
+            <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--theme-accent,#C85A2B)]" />
             <span
-              className="text-[10px] font-semibold tracking-[0.3em] text-[#C85A2B] uppercase"
+              className="text-[10px] font-semibold tracking-[0.3em] text-[var(--theme-accent,#C85A2B)] uppercase"
               style={{
                 fontFamily:
                   '"Cinzel", "Playfair Display", "Baskerville", "Georgia", serif',
@@ -280,15 +280,15 @@ export function NavOverlay({ isOpen, onClose, items }: NavOverlayProps) {
                   href={item.href}
                   onClick={onClose}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group flex items-center justify-between border-b border-[#062A3A]/10 py-2.5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-[#C85A2B] dark:border-[#F2E5C9]/10 ${
+                  className={`group flex items-center justify-between border-b border-[#062A3A]/10 py-2.5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-[var(--theme-accent,#C85A2B)] dark:border-[#F2E5C9]/10 ${
                     isActive
-                      ? "text-[#C85A2B]"
-                      : "text-[#062A3A]/85 hover:text-[#C85A2B] dark:text-[#F2E5C9]/90 dark:hover:text-[#C85A2B]"
+                      ? "text-[var(--theme-accent,#C85A2B)]"
+                      : "text-[#062A3A]/85 hover:text-[var(--theme-accent,#C85A2B)] dark:text-[#F2E5C9]/90 dark:hover:text-[var(--theme-accent,#C85A2B)]"
                   }`}
                 >
                   <div className="flex items-baseline gap-4">
                     {/* Destination Number */}
-                    <span className="font-mono text-xs tracking-[0.25em] text-[#C85A2B]">
+                    <span className="font-mono text-xs tracking-[0.25em] text-[var(--theme-accent,#C85A2B)]">
                       {indexCode}
                     </span>
 
@@ -312,7 +312,7 @@ export function NavOverlay({ isOpen, onClose, items }: NavOverlayProps) {
                       </span>
                     )}
                     <NauticalMarker
-                      className={`text-[#C85A2B] transition-transform duration-300 ${
+                      className={`text-[var(--theme-accent,#C85A2B)] transition-transform duration-300 ${
                         isActive
                           ? "scale-125"
                           : "opacity-40 group-hover:scale-125 group-hover:opacity-100"
@@ -336,7 +336,7 @@ export function NavOverlay({ isOpen, onClose, items }: NavOverlayProps) {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div
-                className="text-sm font-bold tracking-[0.3em] text-[#C85A2B] uppercase sm:text-base"
+                className="text-sm font-bold tracking-[0.3em] text-[var(--theme-accent,#C85A2B)] uppercase sm:text-base"
                 style={{
                   fontFamily:
                     '"Cinzel", "Playfair Display", "Baskerville", "Georgia", serif',

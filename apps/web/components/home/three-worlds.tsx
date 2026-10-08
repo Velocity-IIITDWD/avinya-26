@@ -32,7 +32,7 @@ const worlds: WorldData[] = [
     tagline: "Endure the code storm at the jagged edge of technology",
     description:
       "A rugged volcanic sanctuary where coders, architects, and technical pioneers test their mettle against uncharted algorithmic horizons. Home to the flagship 24-hour hackathons, system defense tournaments, and cryptographic mysteries.",
-    image: "/images/island-outpost.png",
+    image: "/images/island-outpost.webp",
     color: "#C85A2B", // Terracotta
     accentBg: "rgba(200, 90, 43, 0.15)",
     events: ["Flagship 24H Hackathon", "Algo-Storm Competitive Coding", "Web3 Frontier Challenge", "Capture The Flag (CTF)"],
@@ -48,7 +48,7 @@ const worlds: WorldData[] = [
     tagline: "Where mechanical sparks fly and competitive fervor takes over",
     description:
       "A lush, untamed archipelago transformed into a high-octane battle zone. Witness custom combat bots clash in ironclad arenas, aerial drone sprints, intense LAN gaming championships, and AI agent simulations.",
-    image: "/images/island-pandemonium.png",
+    image: "/images/island-pandemonium.webp",
     color: "#2E8B57", // Emerald Sea
     accentBg: "rgba(46, 139, 87, 0.15)",
     events: ["RoboWars Metal Clash", "Autonomous Drone Gauntlet", "Neon Drift Esports (Valorant)", "AI Battle Simulators"],
@@ -64,7 +64,7 @@ const worlds: WorldData[] = [
     tagline: "Shore leave for the soul — lights, melodies, and grand finale",
     description:
       "A radiant haven of celebration illuminated by carnival lanterns and moonlit tides. The grand finale of Avinya unites national musical headliners, fierce battle of the bands, vibrant dance crews, dramatic performances, and culinary delights.",
-    image: "/images/island-carnival.png",
+    image: "/images/island-carnival.webp",
     color: "#C5A059", // Brass Gold
     accentBg: "rgba(197, 160, 89, 0.15)",
     events: ["Star Celebrity Pro-Nite", "Battle of the Bands", "Choreo-Night Dance Showcase", "Runway Fashion Odyssey"],
@@ -250,7 +250,7 @@ export function ThreeWorlds() {
               {/* CTA to Explore all events in this world */}
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link
-                  href="/events"
+                  href={`/events?world=${activeWorld.id}`}
                   className="group inline-flex items-center gap-2 rounded-md bg-[#C85A2B] px-6 py-3 font-mono text-xs font-bold tracking-[0.2em] text-[#F4E8D1] uppercase transition-all duration-300 hover:bg-[#a84920]"
                 >
                   <span>INSPECT ALL {activeWorld.name} EVENTS</span>
