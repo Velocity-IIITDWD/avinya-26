@@ -12,16 +12,21 @@ interface UseWorldTransitionRefs {
   heroDividerRef: React.RefObject<HTMLDivElement | null>
   floatingDecorationsRef?: React.RefObject<HTMLDivElement | null>
   cardsContainerRef?: React.RefObject<HTMLDivElement | null>
+  bgContainerRef?: React.RefObject<HTMLDivElement | null>
 }
 
 /**
- * Hook orchestrating the 5-phase cinematic GSAP world transition sequence:
- * Phase 1: Old world exit (move up + fade out)
- * Phase 2: Theme accent color interpolation (400-600ms)
- * Phase 3: Background atmosphere transition
- * Phase 4: New world hero entrance with staggered elements (title, subtitle, line, metadata)
- * Phase 5: Event cards entrance with staggered GSAP timeline
- * Includes clean timeline kill and overwrite for rapid world switching.
+ * Hook orchestrating the cinematic GSAP world transition timeline (~700-1100ms total):
+ * 0–250ms:   old world hero fades upward
+ * 100–400ms: old background scales slightly
+ * 200–500ms: old atmospheric layer fades + blur increases
+ * 280ms:     react world commit (CSS variables + DOM update)
+ * 300–600ms: new world background enters & settles
+ * 400–700ms: new world atmosphere appears
+ * 500–900ms: new world hero title, subtitle & motifs enter
+ * 600–1000ms: event cards stagger into place
+ *
+ * AVINYA navbar & branding remains stable throughout as the voyage ship.
  */
 export function useWorldTransition({
   heroEyebrowRef,
@@ -30,6 +35,7 @@ export function useWorldTransition({
   heroDividerRef,
   floatingDecorationsRef,
   cardsContainerRef,
+  bgContainerRef,
 }: UseWorldTransitionRefs) {
   const currentTimelineRef = useRef<gsap.core.Timeline | null>(null)
 
@@ -75,9 +81,12 @@ export function useWorldTransition({
       const eyebrowEl = heroEyebrowRef.current
       const floatingEl = floatingDecorationsRef?.current
       const cardsGrid = cardsContainerRef?.current
+      const bgCanvas =
+        bgContainerRef?.current ||
+        (document.querySelector("#world-background-canvas") as HTMLDivElement | null)
 
       // Clean up previous tweens
-      gsap.killTweensOf([titleEl, subtitleEl, dividerEl, eyebrowEl, floatingEl])
+      gsap.killTweensOf([titleEl, subtitleEl, dividerEl, eyebrowEl, floatingEl, bgCanvas])
 
       const cardItems = cardsGrid ? cardsGrid.querySelectorAll(".event-card-item") : []
       if (cardItems.length > 0) {
@@ -92,15 +101,14 @@ export function useWorldTransition({
       })
       currentTimelineRef.current = tl
 
-      // ── PHASE 1: OLD WORLD EXIT (0.0s - 0.28s) ────────────────────
-      // Current hero content moves slightly upward and fades out
+      // ── PHASE 1: OLD WORLD HERO FADES UPWARD (0–250ms) ───────────
       if (titleEl && subtitleEl) {
         tl.to(
           [titleEl, subtitleEl],
           {
-            y: -20,
+            y: -24,
             opacity: 0,
-            duration: 0.28,
+            duration: 0.25,
             ease: "power2.in",
           },
           0
@@ -111,9 +119,9 @@ export function useWorldTransition({
         tl.to(
           dividerEl,
           {
-            scaleX: 0.4,
+            scaleX: 0.3,
             opacity: 0,
-            duration: 0.22,
+            duration: 0.2,
             ease: "power2.in",
           },
           0
@@ -124,22 +132,9 @@ export function useWorldTransition({
         tl.to(
           eyebrowEl,
           {
-            y: -12,
+            y: -14,
             opacity: 0,
-            duration: 0.22,
-            ease: "power2.in",
-          },
-          0
-        )
-      }
-
-      if (floatingEl) {
-        tl.to(
-          floatingEl,
-          {
-            opacity: 0.3,
-            scale: 0.96,
-            duration: 0.26,
+            duration: 0.2,
             ease: "power2.in",
           },
           0
@@ -152,7 +147,7 @@ export function useWorldTransition({
           {
             y: -15,
             opacity: 0.2,
-            duration: 0.24,
+            duration: 0.22,
             ease: "power2.in",
             stagger: 0.02,
           },
@@ -160,92 +155,132 @@ export function useWorldTransition({
         )
       }
 
-      // ── PHASE 2: WORLD ACCENT INTERPOLATION (0.15s - 0.65s) ───────
-      // Color interpolation on CSS variables for a fluid shift
-      const colorProxy = {
-        accent: fromTheme.colors.accent,
-        border: fromTheme.colors.border,
-      }
-
-      tl.to(
-        colorProxy,
-        {
-          accent: toTheme.colors.accent,
-          border: toTheme.colors.border,
-          duration: 0.5,
-          ease: "power2.out",
-          onUpdate: () => {
-            document.documentElement.style.setProperty(
-              "--theme-accent",
-              colorProxy.accent
-            )
-            document.documentElement.style.setProperty(
-              "--theme-border",
-              colorProxy.border
-            )
+      // ── PHASE 2: BACKGROUND SCALES SLIGHTLY (100–400ms) ───────────
+      if (bgCanvas) {
+        tl.to(
+          bgCanvas,
+          {
+            scale: 1.04,
+            duration: 0.3,
+            ease: "power2.inOut",
           },
-        },
-        0.15
-      )
-
-      // Commit the React world state update at the exit boundary (0.28s)
-      // so DOM updates with new world copy and motifs right as Phase 4 starts
-      tl.add(() => {
-        onCommitWorldChange()
-      }, 0.28)
-
-      // ── PHASE 4: NEW WORLD HERO ENTRANCE (0.35s - 0.85s) ──────────
-      // Title enters (0ms in Phase 4)
-      if (titleEl) {
-        tl.fromTo(
-          titleEl,
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.48, ease: "power2.out" },
-          0.35
+          0.1
         )
       }
 
-      // Subtitle enters (+80ms stagger)
-      if (subtitleEl) {
-        tl.fromTo(
-          subtitleEl,
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.48, ease: "power2.out" },
-          0.43
-        )
-      }
-
-      // Decorative line enters (+150ms stagger)
-      if (dividerEl) {
-        tl.fromTo(
-          dividerEl,
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 0.42, ease: "power2.out" },
-          0.5
-        )
-      }
-
-      // Metadata / eyebrow enters (+220ms stagger)
-      if (eyebrowEl) {
-        tl.fromTo(
-          eyebrowEl,
-          { y: 15, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" },
-          0.57
+      // ── PHASE 3: OLD ATMOSPHERE FADES + BLUR INCREASES (200–500ms) ─
+      if (bgCanvas) {
+        tl.to(
+          bgCanvas,
+          {
+            filter: "blur(6px)",
+            opacity: 0.45,
+            duration: 0.28,
+            ease: "power2.inOut",
+          },
+          0.2
         )
       }
 
       if (floatingEl) {
         tl.to(
           floatingEl,
-          { opacity: 1, scale: 1, duration: 0.45, ease: "power2.out" },
+          {
+            opacity: 0.2,
+            scale: 0.95,
+            duration: 0.25,
+            ease: "power2.in",
+          },
+          0.2
+        )
+      }
+
+      // ── PHASE 4: ACCENT & REACT STATE COMMIT (0.28s) ──────────────
+      // Seamlessly update CSS variables
+      tl.add(() => {
+        document.documentElement.style.setProperty(
+          "--theme-accent",
+          toTheme.colors.accent
+        )
+        document.documentElement.style.setProperty(
+          "--theme-border",
+          toTheme.colors.border
+        )
+        document.documentElement.style.setProperty(
+          "--theme-glow",
+          toTheme.colors.glow
+        )
+        document.documentElement.style.setProperty(
+          "--theme-logo-accent",
+          toTheme.colors.logoAccent
+        )
+        onCommitWorldChange()
+      }, 0.28)
+
+      // ── PHASE 5: NEW WORLD BACKGROUND ENTERS (300–600ms) ──────────
+      if (bgCanvas) {
+        tl.to(
+          bgCanvas,
+          {
+            scale: 1.0,
+            filter: "blur(0px)",
+            opacity: 1.0,
+            duration: 0.35,
+            ease: "power2.out",
+          },
+          0.3
+        )
+      }
+
+      // ── PHASE 6: NEW WORLD ATMOSPHERE APPEARS (400–700ms) ─────────
+      if (floatingEl) {
+        tl.fromTo(
+          floatingEl,
+          { opacity: 0.2, scale: 0.95 },
+          { opacity: 1, scale: 1, duration: 0.38, ease: "power2.out" },
+          0.4
+        )
+      }
+
+      // ── PHASE 7: NEW WORLD HERO ENTRANCE (500–900ms) ──────────────
+      if (eyebrowEl) {
+        tl.fromTo(
+          eyebrowEl,
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.38, ease: "power2.out" },
           0.48
         )
       }
 
-      // ── PHASE 5: EVENT CARDS ENTRANCE TIMELINE (0.55s - 1.05s) ────
+      if (titleEl) {
+        tl.fromTo(
+          titleEl,
+          { y: 28, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" },
+          0.52
+        )
+      }
+
+      if (subtitleEl) {
+        tl.fromTo(
+          subtitleEl,
+          { y: 22, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.42, ease: "power2.out" },
+          0.58
+        )
+      }
+
+      if (dividerEl) {
+        tl.fromTo(
+          dividerEl,
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.4, ease: "power2.out" },
+          0.64
+        )
+      }
+
+      // ── PHASE 8: EVENT CARDS SETTLE (600–1000ms) ──────────────────
       tl.add(() => {
-        // Query fresh card items matching the newly committed world state
         const freshContainer = cardsContainerRef?.current
         const freshCardItems = freshContainer
           ? freshContainer.querySelectorAll(".event-card-item")
@@ -259,13 +294,13 @@ export function useWorldTransition({
               opacity: 1,
               y: 0,
               scale: 1,
-              duration: 0.5,
+              duration: 0.45,
               ease: "power2.out",
-              stagger: 0.08,
+              stagger: 0.07,
             }
           )
         }
-      }, 0.55)
+      }, 0.6)
     },
     [
       heroEyebrowRef,
@@ -274,6 +309,7 @@ export function useWorldTransition({
       heroDividerRef,
       floatingDecorationsRef,
       cardsContainerRef,
+      bgContainerRef,
     ]
   )
 

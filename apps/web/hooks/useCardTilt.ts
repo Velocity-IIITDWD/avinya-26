@@ -8,18 +8,21 @@ interface UseCardTiltOptions {
   imageRef: React.RefObject<HTMLDivElement | null>
   titleRef: React.RefObject<HTMLHeadingElement | null>
   accentLineRef: React.RefObject<HTMLDivElement | null>
+  lightRef?: React.RefObject<HTMLDivElement | null>
   disabled?: boolean
 }
 
 /**
- * Hook for high-performance 60 FPS 3D mouse-following tilt and internal parallax
- * utilizing GSAP quickTo() with automatic mobile/touch and reduced-motion fallbacks.
+ * Hook for high-performance 60 FPS 3D mouse-following tilt, internal parallax,
+ * and world-specific mouse-following lighting utilizing GSAP quickTo() with
+ * automatic mobile/touch and reduced-motion fallbacks.
  */
 export function useCardTilt({
   cardRef,
   imageRef,
   titleRef,
   accentLineRef,
+  lightRef,
   disabled = false,
 }: UseCardTiltOptions) {
   // GSAP quickTo interpolator instances
@@ -61,21 +64,21 @@ export function useCardTilt({
     const ctx = gsap.context(() => {
       if (!cardRef.current) return
 
-      // Card quickTo interpolators (duration: 0.38s with power2.out for physical responsiveness)
+      // Card quickTo interpolators (duration: 0.35s with power2.out)
       cardRotX.current = gsap.quickTo(cardRef.current, "rotationX", {
-        duration: 0.38,
+        duration: 0.35,
         ease: "power2.out",
       })
       cardRotY.current = gsap.quickTo(cardRef.current, "rotationY", {
-        duration: 0.38,
+        duration: 0.35,
         ease: "power2.out",
       })
       cardX.current = gsap.quickTo(cardRef.current, "x", {
-        duration: 0.38,
+        duration: 0.35,
         ease: "power2.out",
       })
       cardY.current = gsap.quickTo(cardRef.current, "y", {
-        duration: 0.38,
+        duration: 0.35,
         ease: "power2.out",
       })
 
@@ -107,12 +110,12 @@ export function useCardTilt({
     return () => {
       ctx.revert()
     }
-  }, [cardRef, imageRef, titleRef, accentLineRef, disabled])
+  }, [cardRef, imageRef, titleRef, accentLineRef, lightRef, disabled])
 
   const onMouseEnter = useCallback(() => {
     if (!isEnabled.current || !cardRef.current) return
 
-    // Card enters hover state: scale 1 -> 1.02, subtle lift
+    // Card enters hover state: scale 1 -> 1.02
     gsap.to(cardRef.current, {
       scale: 1.02,
       duration: 0.35,
@@ -120,7 +123,7 @@ export function useCardTilt({
       overwrite: "auto",
     })
 
-    // Image zooms smoothly to 1.04
+    // Image zooms smoothly to 1.045
     if (imageRef.current) {
       gsap.to(imageRef.current, {
         scale: 1.045,
@@ -139,7 +142,17 @@ export function useCardTilt({
         overwrite: "auto",
       })
     }
-  }, [cardRef, imageRef, accentLineRef])
+
+    // Mouse-following light fades in
+    if (lightRef?.current) {
+      gsap.to(lightRef.current, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto",
+      })
+    }
+  }, [cardRef, imageRef, accentLineRef, lightRef])
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -156,8 +169,8 @@ export function useCardTilt({
       // Maximum rotations: rotateX: ±3deg, rotateY: ±4deg
       const rotX = -normY * (6 * factor) // cursor top tilts card backward/forward
       const rotY = normX * (8 * factor) // cursor right tilts right side back
-      const transX = normX * (8 * factor) // max ±4px
-      const transY = normY * (8 * factor) // max ±4px
+      const transX = normX * (6 * factor) // max ±3px
+      const transY = normY * (6 * factor) // max ±3px
 
       // Update card position smoothly via quickTo
       cardRotX.current?.(rotX)
@@ -165,14 +178,21 @@ export function useCardTilt({
       cardX.current?.(transX)
       cardY.current?.(transY)
 
-      // Internal Parallax: Image moves ±3px, Title moves ±1px
-      imgX.current?.(normX * (6 * factor))
-      imgY.current?.(normY * (6 * factor))
+      // Internal Parallax: Image moves ±4px, Title moves ±1.5px
+      imgX.current?.(normX * (7 * factor))
+      imgY.current?.(normY * (7 * factor))
 
-      titleX.current?.(normX * (2 * factor))
-      titleY.current?.(normY * (2 * factor))
+      titleX.current?.(normX * (3 * factor))
+      titleY.current?.(normY * (3 * factor))
+
+      // Mouse-following world-specific light spotlight
+      if (lightRef?.current) {
+        const localX = e.clientX - rect.left
+        const localY = e.clientY - rect.top
+        lightRef.current.style.background = `radial-gradient(320px circle at ${localX}px ${localY}px, var(--theme-light-color, rgba(224, 90, 43, 0.22)) 0%, transparent 70%)`
+      }
     },
-    [cardRef]
+    [cardRef, lightRef]
   )
 
   const onMouseLeave = useCallback(() => {
@@ -230,7 +250,16 @@ export function useCardTilt({
         overwrite: "auto",
       })
     }
-  }, [cardRef, imageRef, titleRef, accentLineRef])
+
+    if (lightRef?.current) {
+      gsap.to(lightRef.current, {
+        opacity: 0,
+        duration: 0.35,
+        ease: "power2.out",
+        overwrite: "auto",
+      })
+    }
+  }, [cardRef, imageRef, titleRef, accentLineRef, lightRef])
 
   return {
     onMouseEnter,

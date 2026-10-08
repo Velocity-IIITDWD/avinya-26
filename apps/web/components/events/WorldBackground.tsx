@@ -1,14 +1,16 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useRef } from "react"
+import Image from "next/image"
 import { WorldTheme } from "@/lib/theme"
 import { AvinyaSailIcon } from "./NauticalDecorations"
 
 interface WorldBackgroundProps {
   theme: WorldTheme
+  containerRef?: React.RefObject<HTMLDivElement | null>
 }
 
-export function WorldBackground({ theme }: WorldBackgroundProps) {
+export function WorldBackground({ theme, containerRef }: WorldBackgroundProps) {
   const isOutpost = theme.key === "lastOutpost"
   const isPandemonium = theme.key === "pandemonium"
   const isCarnival = theme.key === "carnivalIsland"
@@ -16,331 +18,543 @@ export function WorldBackground({ theme }: WorldBackgroundProps) {
 
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
+      ref={containerRef}
+      id="world-background-canvas"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none transition-[filter,opacity,transform] will-change-[filter,opacity,transform]"
       aria-hidden="true"
     >
-      {/* ─── BASE VINTAGE PARCHMENT GRAIN (PARALLAX LAYER 1: Y 0 -> -20px) ─── */}
+      <style jsx>{`
+        @keyframes dustFloat1 {
+          0% { transform: translate3d(0, 0, 0); opacity: 0.3; }
+          50% { transform: translate3d(30px, -20px, 0); opacity: 0.7; }
+          100% { transform: translate3d(-15px, -40px, 0); opacity: 0.2; }
+        }
+        @keyframes dustFloat2 {
+          0% { transform: translate3d(0, 0, 0); opacity: 0.4; }
+          50% { transform: translate3d(-35px, -30px, 0); opacity: 0.8; }
+          100% { transform: translate3d(20px, -60px, 0); opacity: 0.3; }
+        }
+        @keyframes ferrisSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes waterGlimmer {
+          0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.4; }
+          50% { transform: translate3d(20px, 2px, 0); opacity: 0.8; }
+        }
+        @keyframes sunPulse {
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 45px rgba(255, 0, 127, 0.65)); }
+          50% { transform: scale(1.03); filter: drop-shadow(0 0 65px rgba(255, 0, 127, 0.85)); }
+        }
+        @keyframes scanlineSweep {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(1000%); }
+        }
+        @keyframes starTwinkle {
+          0%, 100% { opacity: 0.3; transform: scale(0.85); }
+          50% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes lightPulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 0.95; }
+        }
+        @keyframes neonFlicker {
+          0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.9; }
+          20%, 24%, 55% { opacity: 0.35; }
+        }
+      `}</style>
+
+      {/* ─── BASE AMBIENT CANVAS (DEEP CINEMATIC BACKGROUND) ───────────────── */}
       <div
-        data-parallax="1"
-        className="absolute inset-0 opacity-45 mix-blend-multiply transition-opacity duration-500 will-change-transform"
-        style={{
-          backgroundImage: "url('/images/parchment-texture.webp')",
-          backgroundSize: "360px 360px",
-          backgroundRepeat: "repeat",
-        }}
+        className="absolute inset-0 transition-colors duration-700"
+        style={{ backgroundColor: theme.colors.background }}
       />
 
-      {/* ─── 1. THE LAST OUTPOST ATMOSPHERE (PARALLAX LAYER 2: Y 0 -> -40px) ─── */}
+      {/* ─── WORLD 1: THE LAST OUTPOST (DESERT SCI-FI FRONTIER) ───────────── */}
       <div
-        data-parallax="2"
-        className="absolute inset-0 transition-opacity duration-500 will-change-transform"
-        style={{ opacity: isOutpost ? 1 : 0 }}
+        data-world-layer="lastOutpost"
+        className={`absolute inset-0 transition-opacity duration-700 will-change-transform ${
+          isOutpost ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
-        {/* Subtle 48px technical engineering grid */}
+        {/* Layer 1: Distant Dusty Sunset Gradient */}
         <div
-          className="absolute inset-0 opacity-[0.055]"
+          data-parallax="1"
+          className="absolute inset-0 opacity-80"
           style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(23, 56, 71, 0.8) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(23, 56, 71, 0.8) 1px, transparent 1px)
-            `,
-            backgroundSize: "48px 48px",
+            background:
+              "radial-gradient(circle at 50% 25%, rgba(224, 90, 43, 0.28) 0%, rgba(217, 144, 54, 0.12) 40%, transparent 75%), linear-gradient(180deg, #18110D 0%, #201511 40%, #14100E 100%)",
           }}
         />
 
-        {/* Technical crosshair markings (+) every 144px in burnt orange */}
+        {/* Layer 2: Giant Planet / Moon Arc in Warm Amber */}
         <div
-          className="absolute inset-0 opacity-[0.14]"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(216, 90, 42, 0.8) 1.5px, transparent 2px),
-              radial-gradient(circle at 0% 0%, rgba(216, 90, 42, 0.8) 1.5px, transparent 2px)
-            `,
-            backgroundSize: "144px 144px",
-          }}
-        />
+          data-parallax="1"
+          className="absolute -top-24 left-1/2 h-[480px] w-[480px] -translate-x-1/2 opacity-25"
+        >
+          <div
+            className="h-full w-full rounded-full border border-[#E05A2B]/40"
+            style={{
+              background:
+                "radial-gradient(circle at 60% 40%, rgba(224, 90, 43, 0.25) 0%, rgba(217, 144, 54, 0.05) 50%, transparent 80%)",
+              boxShadow: "inset 0 0 60px rgba(224, 90, 43, 0.3), 0 0 80px rgba(224, 90, 43, 0.2)",
+            }}
+          />
+          <div className="absolute top-1/2 left-[-20%] h-px w-[140%] -rotate-12 bg-gradient-to-r from-transparent via-[#E05A2B]/40 to-transparent" />
+        </div>
 
-        {/* Subtle Slow Scan Line (24s sweep across technical sector) */}
-        <div className="absolute inset-x-0 h-28 pointer-events-none animate-radar-scan bg-gradient-to-b from-transparent via-[rgba(216,90,42,0.06)] to-transparent" />
-
-        {/* Radar & Bathymetric Elevation Rings */}
+        {/* Layer 3: Distant Rugged Desert Mountain Horizon */}
         <svg
-          className="absolute top-12 -right-24 h-[550px] w-[550px] opacity-[0.08]"
+          data-parallax="2"
+          className="absolute top-20 inset-x-0 h-72 w-full opacity-35"
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          fill="none"
+        >
+          <path
+            d="M0,192L60,181.3C120,171,240,149,360,160C480,171,600,213,720,208C840,203,960,149,1080,144C1200,139,1320,181,1380,202.7L1440,224L1440,320L0,320Z"
+            fill="#2A1B14"
+          />
+          <path
+            d="M0,230L80,215C160,200,320,170,480,185C640,200,800,260,960,245C1120,230,1280,170,1360,155L1440,140L1440,320L0,320Z"
+            fill="#1E140F"
+            opacity="0.8"
+          />
+        </svg>
+
+        {/* Layer 4: Reference Artwork Backdrop (LastOutpost WebP) */}
+        <div
+          data-parallax="2"
+          className="absolute inset-0 opacity-[0.28] mix-blend-lighten"
+        >
+          <Image
+            src="/images/worlds/last-outpost-ref.webp"
+            alt="The Last Outpost Frontier"
+            fill
+            sizes="100vw"
+            priority={isOutpost}
+            className="object-cover object-top filter contrast-125 brightness-90"
+          />
+        </div>
+
+        {/* Layer 5: Industrial Scaffolding & Radar Antenna Silhouettes */}
+        <svg
+          data-parallax="3"
+          className="absolute top-12 right-6 h-[460px] w-[460px] opacity-25 hidden md:block"
           viewBox="0 0 500 500"
           fill="none"
         >
-          <circle cx="250" cy="250" r="230" stroke="#D85A2A" strokeWidth="1" strokeDasharray="4 6" />
-          <circle cx="250" cy="250" r="170" stroke="#173847" strokeWidth="1" />
-          <circle cx="250" cy="250" r="110" stroke="#D85A2A" strokeWidth="1" strokeDasharray="2 4" />
-          <circle cx="250" cy="250" r="50" stroke="#173847" strokeWidth="1" />
-          <line x1="250" y1="10" x2="250" y2="490" stroke="#173847" strokeWidth="0.8" opacity="0.6" />
-          <line x1="10" y1="250" x2="490" y2="250" stroke="#173847" strokeWidth="0.8" opacity="0.6" />
+          {/* Main transmission tower */}
+          <line x1="250" y1="50" x2="200" y2="450" stroke="#E05A2B" strokeWidth="1.5" />
+          <line x1="250" y1="50" x2="300" y2="450" stroke="#E05A2B" strokeWidth="1.5" />
+          <line x1="220" y1="180" x2="280" y2="180" stroke="#E05A2B" strokeWidth="1" />
+          <line x1="210" y1="280" x2="290" y2="280" stroke="#E05A2B" strokeWidth="1" />
+          <line x1="200" y1="380" x2="300" y2="380" stroke="#E05A2B" strokeWidth="1" />
+          <line x1="220" y1="180" x2="290" y2="280" stroke="#D99036" strokeWidth="0.8" />
+          <line x1="280" y1="180" x2="210" y2="280" stroke="#D99036" strokeWidth="0.8" />
+          <circle cx="250" cy="50" r="4" fill="#E05A2B" style={{ animation: "lightPulse 2s infinite" }} />
+          {/* Radar rings */}
+          <circle cx="250" cy="50" r="30" stroke="#E05A2B" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.6" />
+          <circle cx="250" cy="50" r="70" stroke="#E05A2B" strokeWidth="0.8" strokeDasharray="4 6" opacity="0.4" />
         </svg>
 
-        {/* Secondary Navigation Grid on lower left */}
-        <svg
-          className="absolute -bottom-20 -left-20 h-[480px] w-[480px] opacity-[0.06]"
-          viewBox="0 0 400 400"
-          fill="none"
+        {/* Layer 6: Technical Telemetry & Sector Coordinates */}
+        <div
+          data-parallax="3"
+          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#E05A2B]/75 uppercase"
         >
-          <circle cx="200" cy="200" r="180" stroke="#173847" strokeWidth="1" />
-          <circle cx="200" cy="200" r="120" stroke="#D85A2A" strokeWidth="1" strokeDasharray="3 5" />
-          <line x1="20" y1="20" x2="380" y2="380" stroke="#173847" strokeWidth="0.8" strokeDasharray="4 4" />
-          <line x1="20" y1="380" x2="380" y2="20" stroke="#173847" strokeWidth="0.8" strokeDasharray="4 4" />
-        </svg>
-
-        {/* Tiny Orange Ambient Particles */}
-        <div className="absolute top-[20%] left-[15%] h-1.5 w-1.5 rounded-full bg-[#D85A2A]/40 animate-particle-drift-1" />
-        <div className="absolute top-[45%] right-[22%] h-1 w-1 rounded-full bg-[#D85A2A]/50 animate-particle-drift-2" />
-        <div className="absolute top-[70%] left-[28%] h-1.5 w-1.5 rounded-full bg-[#D85A2A]/35 animate-particle-drift-3" />
-        <div className="absolute top-[85%] right-[10%] h-1 w-1 rounded-full bg-[#D85A2A]/45 animate-particle-drift-1" />
-
-        {/* Technical Edge Markings & Monospace Telemetry */}
-        <div className="absolute top-6 left-8 font-mono text-[9px] tracking-[0.28em] text-[#173847]/25 uppercase">
-          SECTOR 01 // SYS_LAT 15°28&apos;40&quot;N • LNG 75°01&apos;15&quot;E // ARCHIVAL CODE REGION
+          <span>SECTOR 01 // DESERT FRONTIER // LAT 15°28&apos;40&quot;N • LNG 75°01&apos;15&quot;E</span>
         </div>
-      </div>
 
-      {/* ─── 2. PANDEMONIUM ATMOSPHERE (PARALLAX LAYER 2: Y 0 -> -40px) ─── */}
-      <div
-        data-parallax="2"
-        className="absolute inset-0 transition-opacity duration-500 will-change-transform"
-        style={{ opacity: isPandemonium ? 1 : 0 }}
-      >
-        {/* Ambient Emerald Energy Radial Glow */}
-        <div
-          className="absolute inset-0 opacity-[0.09]"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 85% 15%, rgba(21, 150, 107, 0.45) 0%, transparent 55%),
-              radial-gradient(circle at 15% 85%, rgba(21, 150, 107, 0.35) 0%, transparent 60%)
-            `,
-          }}
-        />
+        {/* Layer 7: Sparse Drifting Desert Dust Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className="absolute top-[25%] left-[18%] h-2 w-2 rounded-full bg-[#E05A2B]/40 blur-[0.5px]"
+            style={{ animation: "dustFloat1 12s ease-in-out infinite" }}
+          />
+          <div
+            className="absolute top-[40%] right-[24%] h-2.5 w-2.5 rounded-full bg-[#D99036]/45 blur-[0.5px]"
+            style={{ animation: "dustFloat2 15s ease-in-out infinite 2s" }}
+          />
+          <div
+            className="absolute top-[65%] left-[32%] h-1.5 w-1.5 rounded-full bg-[#E05A2B]/35 blur-[0.5px]"
+            style={{ animation: "dustFloat1 18s ease-in-out infinite 4s" }}
+          />
+          <div
+            className="absolute top-[75%] right-[15%] h-2 w-2 rounded-full bg-[#D99036]/40 blur-[0.5px]"
+            style={{ animation: "dustFloat2 14s ease-in-out infinite 1s" }}
+          />
+        </div>
 
-        {/* Precision Engineering Matrix (32px dot pitch) */}
+        {/* Layer 8: Warm Atmospheric Dust Haze Overlay */}
         <div
-          className="absolute inset-0 opacity-[0.075]"
+          className="absolute inset-0 opacity-20 mix-blend-screen"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 50% 50%, rgba(21, 150, 107, 0.8) 1px, transparent 1.5px)",
-            backgroundSize: "32px 32px",
+              "radial-gradient(circle at 50% 100%, rgba(224, 90, 43, 0.45) 0%, transparent 60%)",
           }}
         />
-
-        {/* Printed Circuit Board Traces & Mechanical Nodes (Top Right) */}
-        <svg
-          className="absolute -top-10 -right-10 h-[600px] w-[600px] opacity-[0.11]"
-          viewBox="0 0 600 600"
-          fill="none"
-        >
-          {/* Circuit bus line 1 */}
-          <path
-            d="M 550 50 L 400 50 L 350 100 L 200 100 L 150 150 L 50 150"
-            stroke="#15966B"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <circle cx="550" cy="50" r="4" fill="#15966B" />
-          <circle cx="350" cy="100" r="3" fill="#D85A2A" />
-          <circle cx="50" cy="150" r="4" fill="#15966B" />
-
-          {/* Circuit bus line 2 */}
-          <path
-            d="M 580 120 L 450 120 L 400 170 L 300 170 L 250 220 L 100 220"
-            stroke="#173847"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-          <circle cx="450" cy="120" r="2.5" fill="#15966B" />
-          <circle cx="250" cy="220" r="3" fill="#15966B" />
-
-          {/* Circuit bus line 3 */}
-          <path
-            d="M 520 220 L 420 320 L 320 320 L 280 360 L 180 360"
-            stroke="#15966B"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeDasharray="6 4"
-          />
-          <circle cx="520" cy="220" r="3" fill="#15966B" />
-          <circle cx="180" cy="360" r="3.5" fill="#173847" />
-
-          {/* Mechanical reticle crosshair with slow 35s rotation */}
-          <g transform="translate(300, 260)" className="origin-[300px_260px] animate-slow-spin">
-            <circle cx="0" cy="0" r="30" stroke="#15966B" strokeWidth="1" strokeDasharray="3 3" />
-            <circle cx="0" cy="0" r="15" stroke="#173847" strokeWidth="0.8" />
-            <line x1="-40" y1="0" x2="-20" y2="0" stroke="#15966B" strokeWidth="1" />
-            <line x1="20" y1="0" x2="40" y2="0" stroke="#15966B" strokeWidth="1" />
-            <line x1="0" y1="-40" x2="0" y2="-20" stroke="#15966B" strokeWidth="1" />
-            <line x1="0" y1="20" x2="0" y2="40" stroke="#15966B" strokeWidth="1" />
-          </g>
-        </svg>
-
-        {/* Mechanical Circuit Details (Bottom Left) */}
-        <svg
-          className="absolute -bottom-10 -left-10 h-[500px] w-[500px] opacity-[0.09]"
-          viewBox="0 0 500 500"
-          fill="none"
-        >
-          <path
-            d="M 50 450 L 150 450 L 200 400 L 320 400 L 360 360 L 450 360"
-            stroke="#15966B"
-            strokeWidth="1.4"
-          />
-          <circle cx="50" cy="450" r="3.5" fill="#15966B" />
-          <circle cx="200" cy="400" r="2.5" fill="#D85A2A" />
-          <circle cx="450" cy="360" r="4" fill="#15966B" />
-
-          <rect
-            x="80"
-            y="260"
-            width="60"
-            height="60"
-            stroke="#173847"
-            strokeWidth="1"
-            strokeDasharray="4 2"
-          />
-          <circle cx="110" cy="290" r="4" fill="#15966B" />
-        </svg>
-
-        {/* Tiny Green Ambient Particles */}
-        <div className="absolute top-[25%] left-[20%] h-1.5 w-1.5 rounded-full bg-[#15966B]/50 animate-particle-drift-1" />
-        <div className="absolute top-[50%] right-[18%] h-1 w-1 rounded-full bg-[#15966B]/60 animate-particle-drift-2" />
-        <div className="absolute top-[75%] left-[32%] h-1.5 w-1.5 rounded-full bg-[#15966B]/40 animate-particle-drift-3" />
-        <div className="absolute top-[15%] right-[35%] h-1 w-1 rounded-full bg-[#15966B]/50 animate-particle-drift-2" />
-
-        {/* Monospace telemetry header */}
-        <div className="absolute top-6 left-8 font-mono text-[9px] tracking-[0.28em] text-[#15966B]/35 uppercase">
-          SECTOR 02 // HARDWARE &amp; ROBOTICS // 15°29&apos;10&quot;N 75°01&apos;45&quot;E // ACTIVE TELEMETRY
-        </div>
       </div>
 
-      {/* ─── 3. THE CARNIVAL ISLAND ATMOSPHERE (PARALLAX LAYER 2: Y 0 -> -40px) ─── */}
+      {/* ─── WORLD 2: THE CARNIVAL ISLAND (TROPICAL NIGHT FESTIVAL) ───────── */}
       <div
-        data-parallax="2"
-        className="absolute inset-0 transition-opacity duration-500 will-change-transform"
-        style={{ opacity: isCarnival ? 1 : 0 }}
+        data-world-layer="carnivalIsland"
+        className={`absolute inset-0 transition-opacity duration-700 will-change-transform ${
+          isCarnival ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
-        {/* Warm Celebratory Gold & Sunset Ambient Glow */}
+        {/* Layer 1: Dark Tropical Midnight Teal Sky */}
         <div
-          className="absolute inset-0 opacity-[0.11]"
+          data-parallax="1"
+          className="absolute inset-0 opacity-85"
           style={{
-            backgroundImage: `
-              radial-gradient(circle at 80% 18%, rgba(214, 168, 73, 0.45) 0%, transparent 60%),
-              radial-gradient(circle at 15% 82%, rgba(216, 90, 42, 0.35) 0%, transparent 55%),
-              radial-gradient(circle at 50% 50%, rgba(214, 168, 73, 0.20) 0%, transparent 65%)
-            `,
+            background:
+              "radial-gradient(circle at 75% 30%, rgba(245, 197, 66, 0.22) 0%, rgba(232, 90, 38, 0.12) 35%, transparent 70%), linear-gradient(180deg, #041210 0%, #071E1B 45%, #051614 100%)",
           }}
         />
 
-        {/* Celestial Star Constellation Field (Top Half) with Twinkling Stars */}
+        {/* Layer 2: Twinkling Celestial Star Field & Constellations */}
         <svg
-          className="absolute top-0 right-0 h-[500px] w-full opacity-[0.15]"
-          viewBox="0 0 1000 500"
+          data-parallax="1"
+          className="absolute top-0 inset-x-0 h-80 w-full opacity-40"
+          viewBox="0 0 1000 300"
           fill="none"
-          preserveAspectRatio="none"
         >
-          {/* Constellation Stars (4-point diamond sparkles) */}
-          <g fill="#D6A849">
-            {/* Star 1 */}
-            <path
-              className="animate-star-twinkle"
-              d="M 850 60 Q 850 75 835 75 Q 850 75 850 90 Q 850 75 865 75 Q 850 75 850 60 Z"
-            />
-            {/* Star 2 */}
-            <path
-              className="animate-star-twinkle [animation-delay:1.5s]"
-              d="M 720 140 Q 720 150 710 150 Q 720 150 720 160 Q 720 150 730 150 Q 720 150 720 140 Z"
-            />
-            {/* Star 3 */}
-            <path
-              className="animate-star-twinkle [animation-delay:3s]"
-              d="M 920 180 Q 920 192 908 192 Q 920 192 920 204 Q 920 192 932 192 Q 920 192 920 180 Z"
-            />
-            {/* Star 4 */}
-            <path
-              className="animate-star-twinkle [animation-delay:2s]"
-              d="M 620 80 Q 620 90 610 90 Q 620 90 620 100 Q 620 90 630 90 Q 620 90 620 80 Z"
-            />
-            {/* Star 5 */}
-            <path
-              className="animate-star-twinkle [animation-delay:4s]"
-              d="M 180 110 Q 180 122 168 122 Q 180 122 180 134 Q 180 122 192 122 Q 180 122 180 110 Z"
-            />
+          <g fill="#F5C542">
+            <circle cx="150" cy="40" r="1.5" style={{ animation: "starTwinkle 3s infinite 0.2s" }} />
+            <circle cx="280" cy="90" r="2" style={{ animation: "starTwinkle 4s infinite 1.2s" }} />
+            <circle cx="420" cy="50" r="1.5" style={{ animation: "starTwinkle 3.5s infinite 2.2s" }} />
+            <circle cx="650" cy="70" r="2.5" style={{ animation: "starTwinkle 4s infinite 0.7s" }} />
+            <circle cx="820" cy="45" r="1.5" style={{ animation: "starTwinkle 3s infinite 1.8s" }} />
+            <circle cx="920" cy="110" r="2" style={{ animation: "starTwinkle 4.5s infinite 2.5s" }} />
           </g>
-
-          {/* Faint Constellation Links */}
-          <line x1="850" y1="75" x2="720" y2="150" stroke="#D6A849" strokeWidth="0.8" strokeDasharray="3 4" opacity="0.6" />
-          <line x1="720" y1="150" x2="920" y2="192" stroke="#D6A849" strokeWidth="0.8" strokeDasharray="3 4" opacity="0.6" />
-          <line x1="720" y1="150" x2="620" y2="90" stroke="#D6A849" strokeWidth="0.8" strokeDasharray="3 4" opacity="0.6" />
+          <line x1="650" y1="70" x2="820" y2="45" stroke="#F5C542" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.4" />
+          <line x1="820" y1="45" x2="920" y2="110" stroke="#F5C542" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.4" />
         </svg>
 
-        {/* Flowing Festive Rhythm Harmonics (Sine Waves) */}
-        <svg
-          className="absolute bottom-6 left-0 h-40 w-full opacity-[0.09]"
-          viewBox="0 0 1200 160"
-          fill="none"
-          preserveAspectRatio="none"
+        {/* Layer 3: Reference Artwork Backdrop (Carnival Island WebP) */}
+        <div
+          data-parallax="2"
+          className="absolute inset-0 opacity-[0.32] mix-blend-lighten"
         >
-          <path
-            d="M 0 80 Q 150 20, 300 80 T 600 80 T 900 80 T 1200 80"
-            stroke="#D6A849"
-            strokeWidth="2"
-            fill="none"
+          <Image
+            src="/images/worlds/carnival-island-ref.webp"
+            alt="The Carnival Island Celebration"
+            fill
+            sizes="100vw"
+            priority={isCarnival}
+            className="object-cover object-center filter saturate-125 contrast-110"
           />
-          <path
-            d="M 0 100 Q 150 140, 300 100 T 600 100 T 900 100 T 1200 100"
-            stroke="#D85A2A"
-            strokeWidth="1.2"
+        </div>
+
+        {/* Layer 4: Silhouette Ferris Wheel with Slow Rotation */}
+        <div
+          data-parallax="3"
+          className="absolute top-24 right-10 h-72 w-72 opacity-35 hidden md:block"
+        >
+          <svg
+            className="h-full w-full"
+            viewBox="0 0 200 200"
             fill="none"
-            strokeDasharray="4 6"
-          />
+            style={{ animation: "ferrisSpin 60s linear infinite" }}
+          >
+            <circle cx="100" cy="100" r="80" stroke="#F5C542" strokeWidth="1.2" />
+            <circle cx="100" cy="100" r="50" stroke="#F5C542" strokeWidth="0.8" strokeDasharray="4 4" />
+            <circle cx="100" cy="100" r="12" fill="#E85A26" />
+            {/* Ferris spokes & passenger gondolas */}
+            {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
+              const rad = (deg * Math.PI) / 180
+              const x = 100 + 80 * Math.cos(rad)
+              const y = 100 + 80 * Math.sin(rad)
+              return (
+                <g key={deg}>
+                  <line x1="100" y1="100" x2={x} y2={y} stroke="#F5C542" strokeWidth="0.8" />
+                  <circle cx={x} cy={y} r="3" fill="#F5C542" style={{ animation: "lightPulse 2s infinite" }} />
+                </g>
+              )
+            })}
+          </svg>
+        </div>
+
+        {/* Layer 5: Tropical Palm Silhouettes */}
+        <svg
+          data-parallax="2"
+          className="absolute top-28 left-4 h-56 w-56 opacity-30 hidden sm:block"
+          viewBox="0 0 200 200"
+          fill="none"
+        >
+          {/* Palm trunk */}
+          <path d="M 50 190 Q 60 120 70 80" stroke="#041210" strokeWidth="6" strokeLinecap="round" />
+          {/* Palm fronds */}
+          <path d="M 70 80 Q 40 60 10 70" stroke="#07221E" strokeWidth="3" />
+          <path d="M 70 80 Q 60 40 40 30" stroke="#07221E" strokeWidth="3" />
+          <path d="M 70 80 Q 90 40 110 50" stroke="#07221E" strokeWidth="3" />
+          <path d="M 70 80 Q 110 70 130 90" stroke="#07221E" strokeWidth="3" />
+          <path d="M 70 80 Q 90 90 100 110" stroke="#07221E" strokeWidth="3" />
         </svg>
 
-        {/* Tiny Gold Ambient Particles */}
-        <div className="absolute top-[30%] left-[25%] h-1.5 w-1.5 rounded-full bg-[#D6A849]/50 animate-particle-drift-1" />
-        <div className="absolute top-[60%] right-[24%] h-1 w-1 rounded-full bg-[#D6A849]/60 animate-particle-drift-2" />
-        <div className="absolute top-[80%] left-[18%] h-1.5 w-1.5 rounded-full bg-[#D6A849]/40 animate-particle-drift-3" />
-        <div className="absolute top-[22%] right-[40%] h-1 w-1 rounded-full bg-[#D6A849]/50 animate-particle-drift-1" />
+        {/* Layer 6: Shimmering Water Lagoon Surface & Reflections */}
+        <div
+          data-parallax="3"
+          className="absolute bottom-0 inset-x-0 h-44 opacity-40 overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, rgba(7, 30, 27, 0.6) 30%, rgba(4, 18, 16, 0.95) 100%)",
+          }}
+        >
+          <svg
+            className="absolute inset-0 h-full w-full"
+            preserveAspectRatio="none"
+            viewBox="0 0 800 150"
+            fill="none"
+            style={{ animation: "waterGlimmer 8s ease-in-out infinite" }}
+          >
+            <path
+              d="M0,60 C150,50 250,70 400,60 C550,50 650,70 800,60"
+              stroke="#F5C542"
+              strokeWidth="1.2"
+              opacity="0.4"
+            />
+            <path
+              d="M0,90 C120,80 280,100 450,90 C620,80 720,100 800,90"
+              stroke="#E85A26"
+              strokeWidth="1"
+              opacity="0.35"
+            />
+            <path
+              d="M0,120 C200,110 300,130 500,120 C700,110 750,130 800,120"
+              stroke="#F5C542"
+              strokeWidth="0.8"
+              opacity="0.3"
+            />
+          </svg>
+        </div>
 
-        {/* Monospace telemetry header */}
-        <div className="absolute top-6 left-8 font-mono text-[9px] tracking-[0.28em] text-[#D6A849]/35 uppercase">
-          SECTOR 03 // CULTURAL SPECTACLE &amp; PRO-NITE // 15°29&apos;55&quot;N 75°02&apos;20&quot;E // FESTIVAL GROUND
+        {/* Layer 7: Floating Golden Lantern Embers & Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className="absolute top-[35%] left-[22%] h-2 w-2 rounded-full bg-[#F5C542]/50 blur-[0.5px]"
+            style={{ animation: "dustFloat1 10s ease-in-out infinite" }}
+          />
+          <div
+            className="absolute top-[50%] right-[30%] h-2.5 w-2.5 rounded-full bg-[#E85A26]/55 blur-[0.5px]"
+            style={{ animation: "dustFloat2 12s ease-in-out infinite 1.5s" }}
+          />
+          <div
+            className="absolute top-[70%] left-[45%] h-1.5 w-1.5 rounded-full bg-[#F5C542]/45 blur-[0.5px]"
+            style={{ animation: "dustFloat1 14s ease-in-out infinite 3s" }}
+          />
+        </div>
+
+        {/* Layer 8: Sector Coordinates Header */}
+        <div
+          data-parallax="3"
+          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#F5C542]/80 uppercase"
+        >
+          <span>SECTOR 03 // TROPICAL FESTIVAL LAGOON // 15°29&apos;55&quot;N 75°02&apos;20&quot;E</span>
         </div>
       </div>
 
-      {/* ─── 4. ALL WORLDS UNIFIED ATMOSPHERE (PARALLAX LAYER 2: Y 0 -> -40px) ─── */}
+      {/* ─── WORLD 3: PANDEMONIUM (RETRO FUTURISTIC SYNTHWAVE METROPOLIS) ── */}
       <div
-        data-parallax="2"
-        className="absolute inset-0 transition-opacity duration-500 will-change-transform"
-        style={{ opacity: isAll ? 1 : 0 }}
+        data-world-layer="pandemonium"
+        className={`absolute inset-0 transition-opacity duration-700 will-change-transform ${
+          isPandemonium ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
-        {/* Subtle bathymetric nautical ocean line contours */}
+        {/* Layer 1: Dark Retro Synthwave Void */}
         <div
-          className="absolute inset-0 opacity-[0.035]"
+          data-parallax="1"
+          className="absolute inset-0 opacity-90"
           style={{
-            backgroundImage: `
-              radial-gradient(circle at 10% 20%, rgba(8, 43, 58, 0.5) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(200, 90, 43, 0.4) 0%, transparent 45%),
-              linear-gradient(to right, rgba(8, 43, 58, 0.4) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(8, 43, 58, 0.4) 1px, transparent 1px)
-            `,
-            backgroundSize: "auto, auto, 64px 64px, 64px 64px",
+            background:
+              "radial-gradient(circle at 50% 30%, rgba(255, 0, 127, 0.28) 0%, rgba(42, 121, 255, 0.12) 45%, transparent 75%), linear-gradient(180deg, #07030F 0%, #100624 45%, #080312 100%)",
           }}
         />
 
-        <div className="absolute top-6 left-8 font-mono text-[9px] tracking-[0.28em] text-[#082B3A]/20 uppercase">
-          AVINYA EXPEDITION MAP // THREE REALMS ARCHIPELAGO // 15°29&apos;N 75°01&apos;E
+        {/* Layer 2: Giant Radiant Magenta Sun with Horizontal Cutouts */}
+        <div
+          data-parallax="1"
+          className="absolute top-8 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full overflow-hidden"
+          style={{
+            animation: "sunPulse 6s ease-in-out infinite",
+            background: "linear-gradient(180deg, #FF66B2 0%, #FF007F 60%, #9D4EDD 100%)",
+            boxShadow: "0 0 80px rgba(255, 0, 127, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.4)",
+          }}
+        >
+          {/* Horizontal Synthwave Sun Segment Lines */}
+          <div className="absolute inset-0 flex flex-col justify-end gap-1.5 pb-3">
+            <div className="h-1 w-full bg-[#090514]" />
+            <div className="h-1.5 w-full bg-[#090514]" />
+            <div className="h-2 w-full bg-[#090514]" />
+            <div className="h-2.5 w-full bg-[#090514]" />
+            <div className="h-3 w-full bg-[#090514]" />
+            <div className="h-3.5 w-full bg-[#090514]" />
+          </div>
+        </div>
+
+        {/* Layer 3: Distant Neon City Skyline Silhouettes */}
+        <svg
+          data-parallax="2"
+          className="absolute top-44 inset-x-0 h-56 w-full opacity-45"
+          viewBox="0 0 1000 200"
+          preserveAspectRatio="none"
+          fill="none"
+        >
+          {/* Futuristic buildings */}
+          <rect x="50" y="70" width="35" height="130" fill="#140A2B" stroke="#FF007F" strokeWidth="0.8" opacity="0.6" />
+          <rect x="95" y="40" width="45" height="160" fill="#120726" stroke="#00E5FF" strokeWidth="0.8" opacity="0.7" />
+          <rect x="150" y="80" width="30" height="120" fill="#140A2B" stroke="#9D4EDD" strokeWidth="0.8" opacity="0.5" />
+          <rect x="230" y="30" width="60" height="170" fill="#100522" stroke="#FF007F" strokeWidth="1" opacity="0.8" />
+          {/* Antenna spire */}
+          <line x1="260" y1="5" x2="260" y2="30" stroke="#FF007F" strokeWidth="1.5" />
+          <circle cx="260" cy="5" r="2.5" fill="#00E5FF" style={{ animation: "neonFlicker 3s infinite" }} />
+          {/* More buildings right side */}
+          <rect x="720" y="50" width="55" height="150" fill="#100522" stroke="#00E5FF" strokeWidth="0.8" opacity="0.7" />
+          <rect x="790" y="35" width="40" height="165" fill="#140A2B" stroke="#FF007F" strokeWidth="1" opacity="0.8" />
+          <line x1="810" y1="10" x2="810" y2="35" stroke="#00E5FF" strokeWidth="1.2" />
+          <circle cx="810" cy="10" r="2.5" fill="#FF007F" style={{ animation: "neonFlicker 2.5s infinite" }} />
+          <rect x="840" y="90" width="50" height="110" fill="#120726" stroke="#9D4EDD" strokeWidth="0.8" opacity="0.6" />
+        </svg>
+
+        {/* Layer 4: Reference Artwork Backdrop (Pandemonium WebP) */}
+        <div
+          data-parallax="2"
+          className="absolute inset-0 opacity-[0.34] mix-blend-lighten"
+        >
+          <Image
+            src="/images/worlds/pandemonium-ref.webp"
+            alt="Pandemonium Retro Metropolis"
+            fill
+            sizes="100vw"
+            priority={isPandemonium}
+            className="object-cover object-center filter contrast-125 saturate-135"
+          />
+        </div>
+
+        {/* Layer 5: Cyberpunk Perspective Grid & Neon Floor */}
+        <div
+          data-parallax="3"
+          className="absolute bottom-0 inset-x-0 h-64 opacity-40 overflow-hidden"
+          style={{
+            perspective: "400px",
+            background:
+              "linear-gradient(180deg, transparent 0%, rgba(255, 0, 127, 0.15) 60%, rgba(9, 5, 20, 0.95) 100%)",
+          }}
+        >
+          <div
+            className="h-[200%] w-full origin-top"
+            style={{
+              transform: "rotateX(65deg)",
+              backgroundImage: `
+                linear-gradient(to right, rgba(255, 0, 127, 0.6) 1.5px, transparent 1.5px),
+                linear-gradient(to bottom, rgba(0, 229, 255, 0.5) 1.5px, transparent 1.5px)
+              `,
+              backgroundSize: "48px 48px",
+            }}
+          />
+        </div>
+
+        {/* Layer 6: CRT Scanlines Sweep Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.14]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.75) 50%)",
+            backgroundSize: "100% 4px",
+          }}
+        />
+
+        {/* Layer 7: Sector Coordinates Telemetry Header */}
+        <div
+          data-parallax="3"
+          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#FF007F] uppercase"
+          style={{
+            textShadow: "0 0 10px rgba(255, 0, 127, 0.7)",
+            animation: "neonFlicker 6s infinite",
+          }}
+        >
+          <span>SECTOR 02 // SYNTHWAVE METROPOLIS // 15°29&apos;10&quot;N 75°01&apos;45&quot;E</span>
+        </div>
+
+        {/* Layer 8: Floating Neon Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className="absolute top-[30%] left-[20%] h-2 w-2 rounded-full bg-[#FF007F]/60 blur-[0.5px]"
+            style={{ animation: "dustFloat1 8s ease-in-out infinite" }}
+          />
+          <div
+            className="absolute top-[55%] right-[25%] h-2.5 w-2.5 rounded-full bg-[#00E5FF]/60 blur-[0.5px]"
+            style={{ animation: "dustFloat2 10s ease-in-out infinite 1s" }}
+          />
+          <div
+            className="absolute top-[75%] left-[38%] h-1.5 w-1.5 rounded-full bg-[#FF007F]/50 blur-[0.5px]"
+            style={{ animation: "dustFloat1 11s ease-in-out infinite 2.5s" }}
+          />
         </div>
       </div>
 
-      {/* ─── WATERMARK EMBLEM (PARALLAX LAYER 3: Y 0 -> -60px) ─── */}
+      {/* ─── WORLD 4: UNIFIED ALL (ARCHIPELAGO EXPEDITION MAP) ─────────────── */}
+      <div
+        data-world-layer="all"
+        className={`absolute inset-0 transition-opacity duration-700 will-change-transform ${
+          isAll ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        {/* Deep oceanic cartographic background */}
+        <div
+          data-parallax="1"
+          className="absolute inset-0 opacity-80"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 30%, rgba(200, 90, 43, 0.22) 0%, rgba(197, 160, 89, 0.12) 40%, transparent 75%), linear-gradient(180deg, #09131E 0%, #0D1C2A 45%, #08121C 100%)",
+          }}
+        />
+
+        {/* Charted Archipelago Tracks & Nautical Contours */}
+        <svg
+          data-parallax="2"
+          className="absolute inset-0 h-full w-full opacity-20"
+          viewBox="0 0 1000 600"
+          fill="none"
+        >
+          {/* Bathymetric contours */}
+          <path
+            d="M 100 200 Q 300 100, 600 250 T 900 150"
+            stroke="#C5A059"
+            strokeWidth="1.2"
+            strokeDasharray="6 6"
+          />
+          <path
+            d="M 50 400 Q 350 300, 650 450 T 950 350"
+            stroke="#C85A2B"
+            strokeWidth="1.2"
+            strokeDasharray="4 8"
+          />
+          {/* Waypoint Sector Marks */}
+          <circle cx="250" cy="220" r="8" stroke="#E05A2B" strokeWidth="1.5" />
+          <circle cx="250" cy="220" r="3" fill="#E05A2B" />
+          <circle cx="500" cy="380" r="8" stroke="#FF007F" strokeWidth="1.5" />
+          <circle cx="500" cy="380" r="3" fill="#FF007F" />
+          <circle cx="750" cy="260" r="8" stroke="#F5C542" strokeWidth="1.5" />
+          <circle cx="750" cy="260" r="3" fill="#F5C542" />
+        </svg>
+
+        {/* Archipelago Coordinates Header */}
+        <div
+          data-parallax="3"
+          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#C5A059]/80 uppercase"
+        >
+          <span>AVINYA EXPEDITION MAP // THREE WORLDS ARCHIPELAGO // 15°29&apos;N 75°01&apos;E</span>
+        </div>
+      </div>
+
+      {/* ─── VOYAGE WATERMARK EMBLEM (SUBTLE STABLE VESSEL ANCHOR) ─────────── */}
       <div
         data-parallax="3"
-        className="pointer-events-none absolute -right-16 top-1/4 z-0 opacity-[0.035] select-none transition-transform duration-700 will-change-transform"
+        className="pointer-events-none absolute -right-16 top-1/4 z-0 opacity-[0.04] select-none transition-transform duration-700 will-change-transform"
       >
-        <AvinyaSailIcon variant="navy" size={480} alt="" />
+        <AvinyaSailIcon variant="cream" size={480} alt="" />
       </div>
     </div>
   )

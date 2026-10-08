@@ -108,8 +108,8 @@ export function EventFilters({
                 onClick={() => handleWorldSelect(item.id)}
                 className={`group relative flex shrink-0 cursor-pointer items-center gap-2 rounded-xs border px-3.5 py-2 text-xs font-bold tracking-[0.14em] uppercase select-none transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
                   isActive
-                    ? "border-[#173847] bg-[#173847] text-[#F4E8D1] shadow-md shadow-[#173847]/20"
-                    : "border-[#D8C7A8] bg-[#F7EEDD]/90 text-[#173847] hover:border-[#173847]/40 hover:bg-[#F2E5C9]"
+                    ? "border-[var(--theme-accent)] bg-[var(--theme-card)] text-[var(--theme-primary)] shadow-md shadow-[var(--theme-glow)]"
+                    : "border-[var(--theme-border)] bg-[var(--theme-card)]/75 text-[var(--theme-primary)]/80 hover:border-[var(--theme-accent)]/50 hover:bg-[var(--theme-card)]"
                 }`}
               >
                 {/* World Icon or Active Indicator Dot */}
@@ -133,7 +133,7 @@ export function EventFilters({
                   <span
                     className="h-2 w-2 rounded-full transition-all duration-300 group-hover:scale-125"
                     style={{
-                      backgroundColor: isActive ? item.colors.accent : "rgba(23, 56, 71, 0.4)",
+                      backgroundColor: isActive ? item.colors.accent : "var(--theme-border)",
                       boxShadow: isActive ? `0 0 8px ${item.colors.glow}` : "none",
                     }}
                     aria-hidden="true"
@@ -149,19 +149,19 @@ export function EventFilters({
                 <span
                   className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1.5 font-mono text-[9.5px] font-semibold transition-colors duration-200 ${
                     isActive
-                      ? "bg-[#F4E8D1] text-[#173847]"
-                      : "bg-[#173847]/10 text-[#173847]"
+                      ? "bg-[var(--theme-accent)] text-[#0B1015] font-bold"
+                      : "bg-[var(--theme-border)] text-[var(--theme-primary)]"
                   }`}
                 >
                   {count}
                 </span>
 
-                {/* Active Indicator Underline - Theme-Specific Accent Bar */}
+                {/* Active Indicator Underline */}
                 {isActive && (
                   <span
                     className="absolute bottom-0 left-3 right-3 h-[2.5px] rounded-full transition-all duration-300"
                     style={{
-                      backgroundColor: item.colors.tabUnderline,
+                      backgroundColor: item.colors.accent,
                       boxShadow: `0 0 10px ${item.colors.glow}`,
                     }}
                     aria-hidden="true"
@@ -174,7 +174,7 @@ export function EventFilters({
 
         {/* Quick Search Input */}
         <div className="relative w-full sm:w-72 lg:w-64">
-          <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[#70583E] transition-colors duration-300">
+          <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[var(--theme-accent)] transition-colors duration-300">
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -197,14 +197,14 @@ export function EventFilters({
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={`Search ${currentTheme.shortLabel.toLowerCase()} logs...`}
             aria-label="Search events logbook"
-            className="w-full rounded-xs border border-[#D8C7A8] bg-[#F7EEDD]/90 py-2 pr-7 pl-8 text-xs text-[#173847] placeholder-[#8C7355] transition-all duration-200 focus:border-[var(--theme-accent)] focus:bg-[#FFF9EE] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent)]"
+            className="w-full rounded-xs border border-[var(--theme-border)] bg-[var(--theme-card)]/85 py-2 pr-7 pl-8 text-xs text-[var(--theme-primary)] placeholder-[var(--theme-muted-foreground)] transition-all duration-200 focus:border-[var(--theme-accent)] focus:bg-[var(--theme-card)] focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent)]"
           />
 
           {searchQuery && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="absolute inset-y-0 right-2.5 flex items-center text-xs text-[#70583E] transition-colors duration-200 hover:text-[var(--theme-accent)] cursor-pointer"
+              className="absolute inset-y-0 right-2.5 flex items-center text-xs text-[var(--theme-muted-foreground)] transition-colors duration-200 hover:text-[var(--theme-accent)] cursor-pointer"
               aria-label="Clear search"
             >
               ✕
@@ -218,7 +218,7 @@ export function EventFilters({
         {/* Subtle Archival Eyebrow Title */}
         <div className="mb-2.5 flex items-center gap-3 text-center">
           <div className="h-px w-8 bg-[var(--theme-border)]" />
-          <span className="font-mono text-[10px] font-bold tracking-[0.26em] text-[#70583E] uppercase">
+          <span className="font-mono text-[10px] font-bold tracking-[0.26em] text-[var(--theme-muted-foreground)] uppercase">
             EXPLORE THE VOYAGE
           </span>
           <div className="h-px w-8 bg-[var(--theme-border)]" />
@@ -228,7 +228,7 @@ export function EventFilters({
         <div
           role="tablist"
           aria-label="Expedition discipline category filter"
-          className="inline-flex items-center rounded-xs border border-[#D8C7A8] bg-[#F7EEDD]/90 p-1 shadow-xs transition-colors duration-300"
+          className="inline-flex items-center rounded-xs border border-[var(--theme-border)] bg-[var(--theme-card)]/85 p-1 shadow-xs backdrop-blur-sm transition-colors duration-300"
         >
           {CATEGORY_ITEMS.map((cat) => {
             const isActive = activeCategory === cat.id
@@ -243,8 +243,8 @@ export function EventFilters({
                 onClick={() => onSelectCategory?.(cat.id)}
                 className={`group relative flex items-center gap-2 rounded-xs px-4 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] cursor-pointer select-none ${
                   isActive
-                    ? "border border-[#173847] bg-[#173847] text-[#F4E8D1] shadow-xs"
-                    : "border border-transparent text-[#173847] hover:bg-[#EFE3CD]/80 hover:text-[var(--theme-primary)]"
+                    ? "border border-[var(--theme-accent)] bg-[var(--theme-accent)] text-[#0B1015] font-bold shadow-xs"
+                    : "border border-transparent text-[var(--theme-primary)]/80 hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-primary)]"
                 }`}
               >
                 {/* Discipline Icon */}
@@ -307,15 +307,15 @@ export function EventFilters({
                   <span
                     className={`ml-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1.5 font-mono text-[9px] font-semibold transition-colors duration-200 ${
                       isActive
-                        ? "bg-[#F4E8D1] text-[#173847]"
-                        : "bg-[#173847]/10 text-[#173847]"
+                        ? "bg-[#0B1015] text-[var(--theme-accent)] font-bold"
+                        : "bg-[var(--theme-border)] text-[var(--theme-primary)]"
                     }`}
                   >
                     {count}
                   </span>
                 )}
 
-                {/* Active Underline - Theme-Specific Accent Bar */}
+                {/* Active Underline */}
                 {isActive && (
                   <span
                     className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full transition-all duration-300"

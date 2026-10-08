@@ -54,26 +54,15 @@ export function EventModal({ event, onClose }: EventModalProps) {
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-[#082B3A]/80 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
         aria-hidden="true"
       />
 
       {/* Modal Dialog Card */}
       <div
         ref={modalRef}
-        className="relative z-10 max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)] p-6 sm:p-8 text-[var(--theme-primary)] shadow-2xl shadow-[#173847]/40 transition-colors duration-400"
+        className="relative z-10 max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)] p-6 sm:p-8 text-[var(--theme-primary)] shadow-2xl shadow-black/80 transition-colors duration-400"
       >
-        {/* Parchment texture overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply"
-          style={{
-            backgroundImage: "url('/images/parchment-texture.webp')",
-            backgroundSize: "320px 320px",
-            backgroundRepeat: "repeat",
-          }}
-          aria-hidden="true"
-        />
-
         <NauticalCornerNotches color="var(--theme-border)" className="z-10" />
 
         {/* Close Button */}
@@ -81,7 +70,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
           type="button"
           onClick={onClose}
           aria-label="Close dossier"
-          className="absolute top-4 right-4 z-20 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[var(--theme-border)] bg-[#F4E8D1] text-[var(--theme-primary)] transition-colors hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[#FAF3E3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]"
+          className="absolute top-4 right-4 z-20 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)] text-[var(--theme-primary)] transition-colors hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]"
         >
           ✕
         </button>
@@ -89,7 +78,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
         {/* Modal Header */}
         <div className="relative z-10 mb-4 border-b border-[var(--theme-border)] pb-4">
           <div className="flex items-center gap-2">
-            <AvinyaSailIcon variant="navy" size={26} alt="Avinya" />
+            <AvinyaSailIcon variant="cream" size={26} alt="Avinya" />
             <span className="font-mono text-[10px] font-semibold tracking-[0.25em] text-[var(--theme-accent)] uppercase">
               {event.logNumber} • {theme.motifs.cardDescriptor}
             </span>
@@ -103,7 +92,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
           </h2>
 
           {event.subtitle && (
-            <p className="mt-1 text-xs font-semibold tracking-wide text-[#70583E] uppercase">
+            <p className="mt-1 text-xs font-semibold tracking-wide text-[var(--theme-muted-foreground)] uppercase">
               {event.subtitle}
             </p>
           )}
@@ -115,8 +104,8 @@ export function EventModal({ event, onClose }: EventModalProps) {
             <span
               className={`rounded-xs px-2.5 py-0.5 font-mono text-[9px] font-bold tracking-wider uppercase border ${
                 event.category === "technical"
-                  ? "border-[var(--theme-accent)]/40 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"
-                  : "border-[#C5A059]/40 bg-[#C5A059]/15 text-[#8E6D24]"
+                  ? "border-[var(--theme-accent)]/50 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"
+                  : "border-[#F5C542]/50 bg-[#F5C542]/15 text-[#F5C542]"
               }`}
             >
               {event.category}
@@ -126,7 +115,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
                 {event.displayCategory}
               </span>
             )}
-            <span className="font-mono text-[#7A6348]">
+            <span className="font-mono text-[var(--theme-muted-foreground)]">
               {event.coordinates}
             </span>
           </div>
@@ -141,14 +130,14 @@ export function EventModal({ event, onClose }: EventModalProps) {
             sizes="(max-width: 768px) 100vw, 700px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#173847]/70 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           <div className="absolute bottom-3 left-3 text-xs font-bold tracking-widest text-[#FAF3E3] uppercase drop-shadow-md">
             PORT OF CALL: {event.venue}
           </div>
         </div>
 
         {/* Key Logistics Grid */}
-        <div className="relative z-10 mb-5 grid grid-cols-2 gap-3 rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/40 p-3.5 sm:grid-cols-4">
+        <div className="relative z-10 mb-5 grid grid-cols-2 gap-3 rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/20 p-3.5 sm:grid-cols-4">
           <div>
             <span className="block text-[9px] font-semibold tracking-wider text-[var(--theme-muted-foreground)] uppercase">
               Voyage Date
@@ -184,7 +173,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
         </div>
 
         {/* Full Expedition Description */}
-        <div className="relative z-10 mb-5 space-y-2 text-xs leading-relaxed text-[#2E434D]">
+        <div className="relative z-10 mb-5 space-y-2 text-xs leading-relaxed text-[var(--theme-muted-foreground)]">
           <h4 className="font-serif text-sm font-bold tracking-wider text-[var(--theme-primary)] uppercase">
             Expedition Briefing
           </h4>
@@ -197,7 +186,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
             <h4 className="font-serif text-sm font-bold tracking-wider text-[var(--theme-primary)] uppercase">
               Voyage Regulations
             </h4>
-            <ul className="space-y-1.5 pl-4 text-xs text-[#3A535E]">
+            <ul className="space-y-1.5 pl-4 text-xs text-[var(--theme-muted-foreground)]">
               {event.rules.map((rule, idx) => (
                 <li key={idx} className="list-disc leading-relaxed">
                   {rule}
@@ -209,7 +198,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
 
         {/* Action Buttons */}
         <div className="relative z-10 flex flex-col gap-3 border-t border-[var(--theme-border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-[#7A6348]">
+          <div className="flex items-center gap-2 text-[var(--theme-muted-foreground)]">
             <CompassRoseMini size={18} className="text-[var(--theme-accent)]" />
             <span className="font-mono text-[10px] tracking-wider uppercase">
               AVINYA 2026 • IIIT DHARWAD
@@ -220,7 +209,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xs border border-[var(--theme-border)] bg-[#F4E8D1] px-4 py-2 text-xs font-bold tracking-wider text-[var(--theme-primary)] uppercase hover:bg-[#EBDDC1] cursor-pointer"
+              className="rounded-xs border border-[var(--theme-border)] bg-[var(--theme-card)] px-4 py-2 text-xs font-bold tracking-wider text-[var(--theme-primary)] uppercase hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] cursor-pointer"
             >
               Back to Map
             </button>
@@ -230,8 +219,8 @@ export function EventModal({ event, onClose }: EventModalProps) {
               onClick={() => setIsRegistered(true)}
               className={`rounded-xs px-5 py-2 text-xs font-bold tracking-[0.16em] uppercase transition-all duration-300 cursor-pointer ${
                 isRegistered
-                  ? "bg-[#15966B] text-[#FAF3E3]"
-                  : "bg-[var(--theme-primary)] text-[#F4E8D1] hover:bg-[var(--theme-accent)] hover:text-[#FAF3E3]"
+                  ? "bg-[#10B981] text-[#FFFFFF]"
+                  : "bg-[var(--theme-accent)] text-[#0B1015] hover:bg-[var(--theme-primary)] hover:text-[#FFFFFF]"
               }`}
             >
               {isRegistered ? "✓ Berth Booked (Registered)" : "Book Passage (Register)"}

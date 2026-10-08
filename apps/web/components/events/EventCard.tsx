@@ -33,18 +33,23 @@ export function EventCard({
   const imageRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const accentLineRef = useRef<HTMLDivElement>(null)
+  const lightRef = useRef<HTMLDivElement>(null)
 
   const [isHovered, setIsHovered] = useState(false)
   const { theme } = useWorldTheme()
 
-  // 3D Mouse Tilt & Internal Parallax via GSAP quickTo
-  const { onMouseEnter: handleMouseEnterTilt, onMouseMove, onMouseLeave: handleMouseLeaveTilt } =
-    useCardTilt({
-      cardRef,
-      imageRef,
-      titleRef,
-      accentLineRef,
-    })
+  // 3D Mouse Tilt, Internal Parallax & World-Specific Cursor Light via GSAP quickTo
+  const {
+    onMouseEnter: handleMouseEnterTilt,
+    onMouseMove,
+    onMouseLeave: handleMouseLeaveTilt,
+  } = useCardTilt({
+    cardRef,
+    imageRef,
+    titleRef,
+    accentLineRef,
+    lightRef,
+  })
 
   const handleMouseEnter = () => {
     setIsHovered(true)
@@ -61,12 +66,12 @@ export function EventCard({
   return (
     <div
       className={`group event-card-item relative h-full select-none transition-opacity duration-300 ${
-        isDimmed ? "opacity-[0.86]" : "opacity-100"
+        isDimmed ? "opacity-[0.82]" : "opacity-100"
       } ${className}`}
     >
       {/* ─── PHYSICAL SECONDARY BACKING LAYER (EXPEDITION DEPTH) ─── */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-md border border-[#D5C6A6]/80 bg-[#ECE0C6] shadow-xs transition-transform duration-500 ease-out translate-x-1.5 translate-y-2 group-hover:translate-x-2 group-hover:translate-y-3.5 group-hover:opacity-90"
+        className="pointer-events-none absolute inset-0 rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)]/50 shadow-xs transition-transform duration-500 ease-out translate-x-1.5 translate-y-2 group-hover:translate-x-2 group-hover:translate-y-3.5 group-hover:opacity-90"
         aria-hidden="true"
       />
 
@@ -76,37 +81,25 @@ export function EventCard({
         onMouseMove={onMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="relative z-10 flex h-full flex-col justify-between overflow-hidden rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)] p-5 sm:p-6 text-[var(--theme-primary)] shadow-[0_4px_18px_-4px_rgba(23,56,71,0.08)] hover:border-[var(--theme-card-hover-border)] hover:shadow-[0_22px_45px_-12px_var(--theme-glow)] will-change-transform transition-[border-color,box-shadow,background-color] duration-300"
+        className="relative z-10 flex h-full flex-col justify-between overflow-hidden rounded-md border border-[var(--theme-border)] bg-[var(--theme-card)] p-5 sm:p-6 text-[var(--theme-primary)] shadow-[0_6px_22px_-4px_rgba(0,0,0,0.4)] hover:border-[var(--theme-card-hover-border)] hover:shadow-[0_22px_48px_-10px_var(--theme-glow)] will-change-transform transition-[border-color,box-shadow,background-color] duration-300"
         style={{
           transformStyle: "preserve-3d",
         }}
       >
-        {/* ─── VINTAGE PARCHMENT PAPER TEXTURE OVERLAY ─────────── */}
+        {/* ─── MOUSE-FOLLOWING SPOTLIGHT LAYER (WORLD-SPECIFIC TINT) ─── */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-50"
-          style={{
-            backgroundImage: "url('/images/parchment-texture.webp')",
-            backgroundSize: "320px 320px",
-            backgroundRepeat: "repeat",
-          }}
+          ref={lightRef}
+          className="pointer-events-none absolute inset-0 z-20 rounded-md opacity-0 transition-opacity duration-300"
           aria-hidden="true"
         />
-
-        {/* ─── SUBTLE PAPER-LIGHT SWEEP EFFECT ─────────────────────── */}
-        <div
-          className="pointer-events-none absolute inset-0 z-20 overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          aria-hidden="true"
-        >
-          <div className="absolute inset-y-0 -left-48 w-40 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] group-hover:animate-paper-light-sweep" />
-        </div>
 
         {/* ─── ANIMATED TOP ENGRAVED ACCENT LINE (GSAP TRANSFORM) ──── */}
         <div
           ref={accentLineRef}
-          className="pointer-events-none absolute top-0 left-0 right-0 h-[3px] origin-center scale-x-0"
+          className="pointer-events-none absolute top-0 left-0 right-0 h-[3px] origin-center scale-x-0 z-30"
           style={{
             backgroundColor: "var(--theme-accent)",
-            boxShadow: "0 0 10px var(--theme-glow)",
+            boxShadow: "0 0 12px var(--theme-glow)",
           }}
           aria-hidden="true"
         />
@@ -124,14 +117,14 @@ export function EventCard({
             <div className="flex items-center gap-2">
               {/* Official Avinya Maritime Sail Icon - Moves Independently */}
               <div className="relative flex shrink-0 items-center justify-center transition-transform duration-500 ease-out group-hover:rotate-[-8deg] group-hover:scale-110">
-                <AvinyaSailIcon variant="navy" size={24} alt="Avinya Sail" />
+                <AvinyaSailIcon variant="cream" size={24} alt="Avinya Sail" />
               </div>
 
               <div className="flex flex-col">
                 <span className="font-mono text-[9px] font-semibold tracking-[0.25em] text-[var(--theme-accent)] uppercase transition-colors duration-300">
                   {event.logNumber}
                 </span>
-                <span className="text-[10px] font-bold tracking-[0.14em] text-[var(--theme-primary)]/80 uppercase">
+                <span className="text-[10px] font-bold tracking-[0.14em] text-[var(--theme-primary)]/90 uppercase">
                   {event.displayCategory || event.category}
                 </span>
               </div>
@@ -143,18 +136,21 @@ export function EventCard({
               <span
                 className={`rounded-xs px-2 py-0.5 font-mono text-[8.5px] font-bold tracking-wider uppercase border transition-colors duration-300 ${
                   event.category === "technical"
-                    ? "border-[var(--theme-accent)]/40 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"
-                    : "border-[#C5A059]/40 bg-[#C5A059]/15 text-[#8E6D24]"
+                    ? "border-[var(--theme-accent)]/50 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"
+                    : "border-[#F5C542]/50 bg-[#F5C542]/15 text-[#F5C542]"
                 }`}
               >
                 {event.category}
               </span>
 
               {/* World Realm Marker */}
-              <div className="flex items-center gap-1 rounded-full border border-[var(--theme-border)] bg-[var(--theme-accent-soft)] px-2 py-0.5 shadow-xs transition-colors duration-300 group-hover:border-[var(--theme-accent)]/50">
+              <div className="flex items-center gap-1 rounded-full border border-[var(--theme-border)] bg-[var(--theme-accent-soft)] px-2 py-0.5 shadow-xs transition-colors duration-300 group-hover:border-[var(--theme-accent)]/60">
                 <span
                   className="inline-block h-1.5 w-1.5 rounded-full transition-colors duration-300"
-                  style={{ backgroundColor: "var(--theme-accent)" }}
+                  style={{
+                    backgroundColor: "var(--theme-accent)",
+                    boxShadow: "0 0 6px var(--theme-glow)",
+                  }}
                   aria-hidden="true"
                 />
                 <span className="text-[9px] font-semibold tracking-wider text-[var(--theme-primary)] uppercase">
@@ -173,7 +169,7 @@ export function EventCard({
               {event.title}
             </h3>
             {event.subtitle && (
-              <p className="mt-0.5 text-[11px] font-medium tracking-wide text-[#70583E]">
+              <p className="mt-0.5 text-[11px] font-medium tracking-wide text-[var(--theme-muted-foreground)]">
                 {event.subtitle}
               </p>
             )}
@@ -182,7 +178,7 @@ export function EventCard({
           {/* ─── EVENT ARTWORK / IMAGE CONTAINER (CLIPPED + GSAP PARALLAX) ─── */}
           <div
             ref={imageRef}
-            className="relative mb-3.5 aspect-[16/10] w-full overflow-hidden rounded-xs border border-[var(--theme-border)] bg-[#173847] shadow-inner transition-colors duration-300 will-change-transform"
+            className="relative mb-3.5 aspect-[16/10] w-full overflow-hidden rounded-xs border border-[var(--theme-border)] bg-[#0C121A] shadow-inner transition-colors duration-300 will-change-transform"
           >
             <Image
               src={event.image}
@@ -197,16 +193,16 @@ export function EventCard({
 
             {/* Calm State Gradient Scrim */}
             <div
-              className="absolute inset-0 bg-gradient-to-t from-[#173847]/75 via-[#173847]/15 to-transparent transition-opacity duration-500 group-hover:opacity-35"
+              className="absolute inset-0 bg-gradient-to-t from-[#0C121A]/85 via-[#0C121A]/20 to-transparent transition-opacity duration-500 group-hover:opacity-30"
               aria-hidden="true"
             />
 
-            {/* Layered Nautical Hover Reveal Scrim */}
+            {/* Layered Hover Reveal Scrim */}
             <div
               className="absolute inset-0 flex flex-col justify-between p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{
                 background:
-                  "linear-gradient(to top, rgba(23, 56, 71, 0.94) 0%, rgba(23, 56, 71, 0.50) 60%, rgba(23, 56, 71, 0.30) 100%)",
+                  "linear-gradient(to top, rgba(12, 18, 26, 0.95) 0%, rgba(12, 18, 26, 0.60) 60%, rgba(12, 18, 26, 0.35) 100%)",
               }}
             >
               {/* Top row in reveal: coordinates watermark & compass badge */}
@@ -214,8 +210,8 @@ export function EventCard({
                 <span className="font-mono text-[9px] tracking-widest text-[#E3D1B1] opacity-90">
                   {event.coordinates}
                 </span>
-                <div className="rounded-full bg-[#FAF3E3]/20 p-1 backdrop-blur-xs transition-transform duration-500 group-hover:rotate-45">
-                  <CompassRoseMini size={18} className="text-[#F4E8D1]" />
+                <div className="rounded-full bg-white/10 p-1 backdrop-blur-xs transition-transform duration-500 group-hover:rotate-45">
+                  <CompassRoseMini size={18} className="text-[var(--theme-accent)]" />
                 </div>
               </div>
 
@@ -260,16 +256,16 @@ export function EventCard({
           </div>
 
           {/* ─── DESCRIPTION (LOG SUMMARY) ──────────────────────────── */}
-          <p className="mb-4 text-xs leading-relaxed text-[#334D57] line-clamp-2">
+          <p className="mb-4 text-xs leading-relaxed text-[var(--theme-muted-foreground)] line-clamp-2">
             {event.description}
           </p>
 
           {/* ─── SHIP'S LOG METADATA GRID (DATE, TIME, VENUE) ───────── */}
-          <div className="mt-auto rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/40 p-2.5 transition-colors duration-400 group-hover:bg-[var(--theme-accent-soft)]/60">
+          <div className="mt-auto rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/25 p-2.5 transition-colors duration-400 group-hover:bg-[var(--theme-accent-soft)]/45">
             <div className="grid grid-cols-2 gap-2 text-[11px]">
               {/* Date & Day */}
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-accent)] transition-colors duration-300">
                   📅
                 </span>
                 <div className="flex flex-col leading-tight">
@@ -284,7 +280,7 @@ export function EventCard({
 
               {/* Time */}
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-accent)] transition-colors duration-300">
                   ⏱
                 </span>
                 <div className="flex flex-col leading-tight">
@@ -300,7 +296,7 @@ export function EventCard({
 
             {/* Venue (Port of Call) */}
             <div className="mt-2 flex items-center gap-2 border-t border-[var(--theme-border)] pt-1.5 text-[11px]">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-primary)] transition-colors duration-300">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-[var(--theme-primary)]/10 text-[10px] text-[var(--theme-accent)] transition-colors duration-300">
                 📍
               </span>
               <div className="flex flex-col leading-tight truncate">
@@ -317,12 +313,12 @@ export function EventCard({
 
         {/* ─── FOOTER: NAUTICAL DIVIDER & EXPLORE ACTION ──────────── */}
         <footer className="relative z-10 mt-4 border-t border-[var(--theme-border)] pt-3.5 transition-colors duration-400">
-          <div className="mb-2.5 flex items-center justify-between text-[#BBA680]">
+          <div className="mb-2.5 flex items-center justify-between text-[var(--theme-muted-foreground)]">
             <WaveDividerLine
               width={70}
               className="text-[var(--theme-accent)]/60 transition-all duration-500 group-hover:scale-x-110"
             />
-            <span className="font-mono text-[9px] tracking-wider text-[#8A7154]">
+            <span className="font-mono text-[9px] tracking-wider text-[var(--theme-muted-foreground)]">
               {event.day.toUpperCase()}
             </span>
             <WaveDividerLine
@@ -335,7 +331,7 @@ export function EventCard({
             type="button"
             onClick={() => onExplore?.(event)}
             aria-label={`Explore ${event.title}`}
-            className="group/btn relative flex w-full items-center justify-between overflow-hidden rounded-xs border border-[var(--theme-primary)] bg-[var(--theme-primary)] px-4 py-2.5 text-xs font-bold tracking-[0.16em] text-[#F4E8D1] uppercase transition-all duration-300 hover:bg-[var(--theme-accent)] hover:border-[var(--theme-accent)] hover:text-[#FFF4D6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] focus-visible:ring-offset-2 active:scale-[0.99] cursor-pointer shadow-xs"
+            className="group/btn relative flex w-full items-center justify-between overflow-hidden rounded-xs border border-[var(--theme-border)] bg-[var(--theme-primary)] px-4 py-2.5 text-xs font-bold tracking-[0.16em] text-[var(--theme-background)] uppercase transition-all duration-300 hover:bg-[var(--theme-accent)] hover:border-[var(--theme-accent)] hover:text-[#FFFFFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] focus-visible:ring-offset-2 active:scale-[0.99] cursor-pointer shadow-md"
           >
             <span className="flex items-center gap-2">
               <span className="transition-transform duration-300 group-hover/btn:rotate-45">🧭</span>

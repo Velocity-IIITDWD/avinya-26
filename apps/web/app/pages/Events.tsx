@@ -10,7 +10,7 @@ export default function Events() {
   return (
     <div
       style={cssVariables as React.CSSProperties}
-      className="min-h-screen bg-[var(--theme-background,#FAF3E3)] transition-colors duration-500"
+      className="min-h-screen bg-[var(--theme-background,#0B1724)] transition-colors duration-700"
     >
       <EventsSection />
     </div>

@@ -24,6 +24,7 @@ export function EventsSection() {
 
   // Structural & GSAP animation refs
   const sectionRef = useRef<HTMLElement>(null)
+  const bgContainerRef = useRef<HTMLDivElement>(null)
   const heroContainerRef = useRef<HTMLDivElement>(null)
   const heroEyebrowRef = useRef<HTMLDivElement>(null)
   const heroTitleRef = useRef<HTMLHeadingElement>(null)
@@ -32,10 +33,14 @@ export function EventsSection() {
   const floatingDecorationsRef = useRef<HTMLDivElement>(null)
   const cardsContainerRef = useRef<HTMLDivElement>(null)
 
-  // 1. GSAP Scroll Parallax across 5 calibrated layers
-  useScrollParallax({ containerRef: sectionRef })
+  // 1. GSAP Scroll Parallax & Cinematic World-to-Event transition
+  useScrollParallax({
+    containerRef: sectionRef,
+    bgRef: bgContainerRef,
+    cardsContainerRef,
+  })
 
-  // 2. GSAP 5-Phase Cinematic World Transition
+  // 2. GSAP Cinematic World Transition Timeline
   const { executeTransition } = useWorldTransition({
     heroContainerRef,
     heroEyebrowRef,
@@ -44,6 +49,7 @@ export function EventsSection() {
     heroDividerRef,
     floatingDecorationsRef,
     cardsContainerRef,
+    bgContainerRef,
   })
 
   // Handle direct navigation and URL parameters on mount
@@ -191,10 +197,10 @@ export function EventsSection() {
       style={cssVariables as React.CSSProperties}
       className="relative w-full overflow-hidden bg-[var(--theme-background)] py-16 text-[var(--theme-primary)] transition-colors duration-500 sm:py-24"
     >
-      {/* ─── DYNAMIC THEME-AWARE BACKGROUND LAYER ── */}
-      <WorldBackground theme={theme} />
+      {/* ─── DYNAMIC THEME-AWARE BACKGROUND LAYER (WITH GSAP WORLD-TO-EVENT SCROLL BLUR) ── */}
+      <WorldBackground theme={theme} containerRef={bgContainerRef} />
 
-      {/* ─── FLOATING DECORATIVE EXPEDITION ELEMENTS (SLOW 5-8s FLOAT) ─── */}
+      {/* ─── FLOATING DECORATIVE EXPEDITION ELEMENTS ─────────────────── */}
       <div
         ref={floatingDecorationsRef}
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
@@ -203,7 +209,7 @@ export function EventsSection() {
         {/* Floating Coordinates Waypoint (Top Left Flank) */}
         <div
           data-parallax="3"
-          className="hidden lg:flex absolute top-28 left-6 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[#F2E5C9]/85 px-3 py-1 font-mono text-[9px] text-[#70583E] shadow-xs backdrop-blur-xs animate-voyage-float"
+          className="hidden lg:flex absolute top-28 left-6 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/80 px-3 py-1 font-mono text-[9px] text-[var(--theme-muted-foreground)] shadow-sm backdrop-blur-xs animate-voyage-float"
         >
           <span className="text-[var(--theme-accent)]">⚓</span>
           <span>LAT 15°29&apos;N</span>
@@ -214,16 +220,16 @@ export function EventsSection() {
         {/* Floating Mini Sextant / Compass Tag (Top Right Flank) */}
         <div
           data-parallax="3"
-          className="hidden lg:flex absolute top-36 right-8 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[#F2E5C9]/85 px-3 py-1 font-mono text-[9px] text-[#70583E] shadow-xs backdrop-blur-xs animate-voyage-float-alt"
+          className="hidden lg:flex absolute top-36 right-8 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/80 px-3 py-1 font-mono text-[9px] text-[var(--theme-muted-foreground)] shadow-sm backdrop-blur-xs animate-voyage-float-alt"
         >
           <CompassRoseMini size={14} className="text-[var(--theme-accent)]" />
-          <span>PORT CLEARANCE ACTIVE</span>
+          <span>EXPEDITION CLEARANCE ACTIVE</span>
         </div>
 
         {/* Floating Celestial Sparkle (Hero Near Title) */}
         <div
           data-parallax="3"
-          className="absolute top-20 right-1/4 hidden md:block text-sm text-[var(--theme-accent)] opacity-55 animate-star-twinkle"
+          className="absolute top-20 right-1/4 hidden md:block text-sm text-[var(--theme-accent)] opacity-60 animate-star-twinkle"
         >
           ✦
         </div>
@@ -231,7 +237,7 @@ export function EventsSection() {
         {/* Floating Dotted Voyage Waypoint (Mid Left) */}
         <div
           data-parallax="3"
-          className="hidden xl:flex absolute top-1/2 left-4 items-center gap-2 font-mono text-[8.5px] text-[#8C7355] tracking-widest uppercase animate-voyage-float-gentle"
+          className="hidden xl:flex absolute top-1/2 left-4 items-center gap-2 font-mono text-[8.5px] text-[var(--theme-muted-foreground)] tracking-widest uppercase animate-voyage-float-gentle"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--theme-accent)]" />
           <span>VOYAGE LOGBOOK // IIIT DHARWAD</span>
@@ -245,12 +251,12 @@ export function EventsSection() {
           <div
             ref={heroEyebrowRef}
             data-parallax="4"
-            className="mb-3.5 inline-flex items-center gap-2.5 rounded-full border border-[var(--theme-border)] bg-[#F2E5C9]/90 px-4 py-1 text-[10px] font-bold tracking-[0.22em] text-[#70583E] uppercase shadow-xs backdrop-blur-xs transition-colors duration-300 will-change-transform"
+            className="mb-3.5 inline-flex items-center gap-2.5 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/85 px-4 py-1.5 text-[10px] font-bold tracking-[0.22em] text-[var(--theme-primary)] uppercase shadow-md backdrop-blur-sm transition-colors duration-300 will-change-transform"
           >
-            <AvinyaSailIcon variant="orange" size={14} alt="" />
+            <AvinyaSailIcon variant="cream" size={14} alt="" />
             <span>{theme.heroEyebrow}</span>
             <span className="text-[var(--theme-accent)]">•</span>
-            <span className="font-mono text-[var(--theme-primary)]">
+            <span className="font-mono text-[var(--theme-accent)]">
               {theme.coordinates}
             </span>
           </div>
@@ -259,7 +265,7 @@ export function EventsSection() {
           <div>
             <h2
               ref={heroTitleRef}
-              className="font-serif text-3xl font-extrabold tracking-[0.04em] text-[var(--theme-primary)] uppercase sm:text-4xl lg:text-5xl transition-colors duration-300 will-change-transform"
+              className="font-serif text-3xl font-extrabold tracking-[0.04em] text-[var(--theme-primary)] uppercase sm:text-4xl lg:text-5xl transition-colors duration-300 will-change-transform drop-shadow-md"
             >
               {theme.heroTitle}
             </h2>
@@ -280,7 +286,7 @@ export function EventsSection() {
             className="mt-5 flex items-center justify-center gap-3 text-[var(--theme-accent)] transition-colors duration-300 will-change-transform"
           >
             <WaveDividerLine width={90} className="text-[var(--theme-accent)]/80" />
-            <CompassRoseMini size={22} className="text-[var(--theme-primary)]" />
+            <CompassRoseMini size={22} className="text-[var(--theme-accent)]" />
             <WaveDividerLine width={90} className="text-[var(--theme-accent)]/80" />
           </div>
         </div>
@@ -288,14 +294,14 @@ export function EventsSection() {
         {/* ─── WORLD SHOWCASE NARRATIVE STRIP (WHEN A WORLD IS SELECTED) */}
         {activeWorld !== "ALL" && (
           <div
-            className="mb-8 flex flex-col items-center justify-between gap-4 rounded-xs border border-[var(--theme-border)] bg-[var(--theme-accent-soft)]/60 p-4 text-[var(--theme-primary)] shadow-xs transition-all duration-500 sm:flex-row sm:px-6"
+            className="mb-8 flex flex-col items-center justify-between gap-4 rounded-xs border border-[var(--theme-border)] bg-[var(--theme-card)]/80 p-4 text-[var(--theme-primary)] shadow-md backdrop-blur-sm transition-all duration-500 sm:flex-row sm:px-6"
             style={{
               borderLeftWidth: "4px",
               borderLeftColor: "var(--theme-accent)",
             }}
           >
             <div className="flex items-center gap-3.5">
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[var(--theme-border)] bg-[#173847] shadow-sm">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)] shadow-md">
                 <Image
                   src={theme.motifs.icon}
                   alt={theme.name}
@@ -309,10 +315,10 @@ export function EventsSection() {
                   <span className="font-mono text-[9.5px] font-bold tracking-widest text-[var(--theme-accent)] uppercase">
                     {theme.day} // {theme.date}
                   </span>
-                  <span className="font-mono text-[9px] text-[#7A6348]">
+                  <span className="font-mono text-[9px] text-[var(--theme-muted-foreground)]">
                     {theme.coordinates}
                   </span>
-                  <span className="rounded-full border border-[var(--theme-accent)]/40 bg-[var(--theme-accent-soft)] px-2 py-0.2 font-mono text-[8px] font-bold tracking-wider text-[var(--theme-accent)] uppercase">
+                  <span className="rounded-full border border-[var(--theme-accent)]/50 bg-[var(--theme-accent-soft)] px-2 py-0.2 font-mono text-[8px] font-bold tracking-wider text-[var(--theme-accent)] uppercase">
                     {theme.motifs.statusIndicator}
                   </span>
                 </div>
@@ -328,7 +334,7 @@ export function EventsSection() {
             <button
               type="button"
               onClick={() => handleSelectWorld("ALL")}
-              className="shrink-0 cursor-pointer text-[10px] font-bold tracking-widest text-[#70583E] uppercase underline underline-offset-4 transition-colors hover:text-[var(--theme-accent)]"
+              className="shrink-0 cursor-pointer text-[10px] font-bold tracking-widest text-[var(--theme-muted-foreground)] uppercase underline underline-offset-4 transition-colors hover:text-[var(--theme-accent)]"
             >
               Show All Worlds
             </button>
@@ -364,7 +370,7 @@ export function EventsSection() {
                     : "ALL DISCIPLINES // FULL VOYAGE ARCHIPELAGO"}
               </span>
               <span className="text-[var(--theme-border)]">•</span>
-              <span className="font-mono text-[9px] text-[#7A6348] uppercase">
+              <span className="font-mono text-[9px] text-[var(--theme-muted-foreground)] uppercase">
                 {theme.shortLabel}
               </span>
             </div>
@@ -386,7 +392,7 @@ export function EventsSection() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 font-mono text-[11px] text-[#7A6348]">
+          <div className="flex items-center gap-3 font-mono text-[11px] text-[var(--theme-muted-foreground)]">
             <span>
               STATUS:{" "}
               <strong className="text-[var(--theme-primary)]">
@@ -415,13 +421,13 @@ export function EventsSection() {
         </div>
 
         {/* ─── VOYAGE LOG FOOTNOTE ─────────────────────────────────── */}
-        <div className="mt-16 flex flex-col items-center justify-center border-t border-[var(--theme-border)] pt-8 text-center text-xs text-[#7A6348] transition-colors duration-400">
-          <AvinyaSailIcon variant="navy" size={28} className="mb-2" alt="Avinya" />
+        <div className="mt-16 flex flex-col items-center justify-center border-t border-[var(--theme-border)] pt-8 text-center text-xs text-[var(--theme-muted-foreground)] transition-colors duration-400">
+          <AvinyaSailIcon variant={activeWorld === "ALL" ? "navy" : "cream"} size={28} className="mb-2" alt="Avinya" />
           <p className="font-serif font-bold tracking-[0.2em] text-[var(--theme-primary)] uppercase">
             Avinya 2026 • Techno-Cultural Fest • IIIT Dharwad
           </p>
-          <p className="mt-1 text-[11px] text-[#8C7355]">
-            Every event is a port of call on the grand nautical expedition. Check in at the Harbour Desk on event days for pass verification.
+          <p className="mt-1 text-[11px] text-[var(--theme-muted-foreground)]/80">
+            Every event is a port of call on the grand voyage. Check in at the Harbour Desk on event days for pass verification.
           </p>
         </div>
       </div>
