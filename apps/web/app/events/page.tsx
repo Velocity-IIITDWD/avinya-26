@@ -1,5 +1,6 @@
-import Events from "../pages/Events"
+import { EventsView } from "@/components/events"
 
-export default function Page() {
-  return <Events />
+export default function EventsPage() {
+  return <EventsView />
 }
+

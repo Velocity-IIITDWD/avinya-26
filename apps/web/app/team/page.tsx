@@ -1,5 +1,5 @@
-import Team from "../pages/Team"
+import { TeamView } from "@/components/team"
 
-export default function Page() {
-  return <Team />
+export default function TeamPage() {
+  return <TeamView />
 }

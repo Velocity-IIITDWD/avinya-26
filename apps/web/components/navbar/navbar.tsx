@@ -14,12 +14,8 @@ import "./navbar.css"
 
 const defaultLinks: NavItem[] = [
   { href: "/", label: "Home", voyageLabel: "Departure", code: "01" },
-  { href: "/#about", label: "About", voyageLabel: "The Logbook", code: "02" },
-  { href: "/#destinations", label: "Worlds", voyageLabel: "Archipelago", code: "03" },
-  { href: "/events", label: "Events", voyageLabel: "Expeditions", code: "04" },
-  { href: "/#schedule", label: "Schedule", voyageLabel: "Itinerary", code: "05" },
-  { href: "/team", label: "Crew", voyageLabel: "The Manifest", code: "06" },
-  { href: "/#contact", label: "Port", voyageLabel: "Dock", code: "07" },
+  { href: "/events", label: "Events", voyageLabel: "Expeditions", code: "02" },
+  { href: "/team", label: "Crew", voyageLabel: "The Manifest", code: "03" },
 ]
 
 export function Navbar() {

@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react"
-import { CompassRose, NauticalSail } from "../navbar/nautical-icons"
+import { CompassRose, NauticalSail } from "@/components/icons"
 
-export default function TeamHero() {
+export function TeamHero() {
   return (
     <section className="relative w-full overflow-hidden border-b border-[#062A3A]/15 bg-[#EFE3C8] pt-28 pb-16 transition-colors sm:pt-32 sm:pb-20 dark:border-[#F4E8D1]/15 dark:bg-[#041B26]">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 md:px-12 lg:px-16">
@@ -49,3 +49,5 @@ export default function TeamHero() {
     </section>
   )
 }
+
+export default TeamHero

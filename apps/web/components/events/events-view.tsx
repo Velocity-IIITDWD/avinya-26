@@ -1,10 +1,10 @@
 "use client"
 
 import React from "react"
-import { EventsSection } from "@/components/events"
+import { EventsSection } from "./EventsSection"
 import { useWorldTheme } from "@/lib/theme"
 
-export default function Events() {
+export function EventsView() {
   const { cssVariables } = useWorldTheme()
 
   return (

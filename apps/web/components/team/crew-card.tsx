@@ -1,20 +1,10 @@
 "use client"
 
 import React from "react"
-import { CompassRose, NauticalSail } from "../navbar/nautical-icons"
+import { CompassRose, NauticalSail } from "@/components/icons"
+import { CrewMember } from "./crew-data"
 
-export interface CrewMember {
-  id: string
-  code: string
-  name: string
-  role: string
-  division: "Secretariat" | "Technical" | "Cultural" | "Operations" | "Advisory"
-  station: string
-  quote?: string
-  avatarInitial: string
-  github?: string
-  linkedin?: string
-}
+export type { CrewMember }
 
 interface CrewCardProps {
   member: CrewMember

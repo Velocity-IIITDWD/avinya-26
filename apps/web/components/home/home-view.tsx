@@ -1,15 +1,15 @@
 "use client"
 
 import React from "react"
-import { HeroVoyage } from "@/components/home/hero-voyage"
-import { AboutJournal } from "@/components/home/about-journal"
-import { ThreeWorlds } from "@/components/home/three-worlds"
-import { EventsPreview } from "@/components/home/events-preview"
-import { ScheduleVoyage } from "@/components/home/schedule-voyage"
-import { ContactDispatch } from "@/components/home/contact-dispatch"
-import { VoyageFooter } from "@/components/footer/voyage-footer"
+import { HeroVoyage } from "@/components/hero"
+import { AboutJournal } from "@/components/about"
+import { ThreeWorlds } from "@/components/three-worlds"
+import { EventsPreview } from "@/components/events-preview"
+import { ScheduleVoyage } from "@/components/schedule"
+import { ContactDispatch } from "@/components/contact"
+import { VoyageFooter } from "@/components/footer"
 
-export default function Home() {
+export function HomeView() {
   return (
     <div className="flex min-h-screen flex-col bg-[#F4E8D1] text-[#062A3A] transition-colors duration-500 dark:bg-[#d9c698] dark:text-[#F4E8D1]">
       {/* 01. The Departure // Hero Section */}

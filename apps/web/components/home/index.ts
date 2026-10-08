@@ -1,0 +1,7 @@
+export * from "./home-view"
+export * from "@/components/hero"
+export * from "@/components/about"
+export * from "@/components/three-worlds"
+export * from "@/components/events-preview"
+export * from "@/components/schedule"
+export * from "@/components/contact"
