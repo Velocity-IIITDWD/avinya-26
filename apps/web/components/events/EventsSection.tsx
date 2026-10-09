@@ -188,7 +188,7 @@ export function EventsSection() {
       return matchesWorld && matchesCategory && matchesSearch
     })
   }, [activeWorld, activeCategory, searchQuery])
-  }, [activeWorld, activeCategory, searchQuery])
+  
 
   return (
     <section
