@@ -381,4 +381,43 @@
     animation: none !important;
     transform: none !important;
   }
+<<<<<<< HEAD
 }
+=======
+}
+/* ---- Island expedition ---- */
+@keyframes expedition-bob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-6%) rotate(1.5deg); }
+}
+@keyframes expedition-dash {
+  to { stroke-dashoffset: -120; }
+}
+@keyframes expedition-wave-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes expedition-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes expedition-shimmer {
+  0% { transform: translateY(-120%); }
+  100% { transform: translateY(320%); }
+}
+@keyframes expedition-dust {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translate3d(40px, -120px, 0); opacity: 0; }
+}
+@keyframes expedition-ripple {
+  0%, 100% { transform: scaleX(0.85); opacity: 0.35; }
+  50% { transform: scaleX(1.1); opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expedition-motion {
+    animation: none !important;
+  }
+}
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)

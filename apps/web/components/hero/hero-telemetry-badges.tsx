@@ -8,7 +8,11 @@ interface HeroTelemetryBadgesProps {
 
 export function HeroTelemetryBadges({ daysLeft }: HeroTelemetryBadgesProps) {
   return (
+<<<<<<< HEAD
     <div className="mt-10 grid grid-cols-3 gap-4 border-t border-[#062A3A]/15 pt-6 sm:max-w-lg dark:border-[#F4E8D1]/15">
+=======
+    <div className="mx-auto mt-6 grid w-full max-w-lg grid-cols-3 gap-4 border-t border-[#062A3A]/15 pt-6 text-center dark:border-[#F4E8D1]/15">
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
       <div>
         <span className="block font-mono text-xl font-bold text-[#C85A2B] sm:text-2xl">
           3

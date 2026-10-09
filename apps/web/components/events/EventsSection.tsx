@@ -1,9 +1,16 @@
 "use client"
 
 import React, { useState, useMemo, useEffect, useRef } from "react"
+<<<<<<< HEAD
 import { eventsData, EventData } from "@/data/events"
 import { useWorldTheme, FilterValue, getWorldTheme } from "@/lib/theme"
 import { WorldTabs, CategoryFilters, CategoryFilterValue } from "./EventFilters"
+=======
+import Image from "next/image"
+import { eventsData, EventData } from "@/data/events"
+import { useWorldTheme, FilterValue, getWorldTheme } from "@/lib/theme"
+import { EventFilters, CategoryFilterValue } from "./EventFilters"
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
 import { EventGrid } from "./EventGrid"
 import { EventModal } from "./EventModal"
 import { WorldBackground } from "./WorldBackground"
@@ -18,6 +25,10 @@ import { useScrollParallax } from "@/hooks/useScrollParallax"
 export function EventsSection() {
   const { activeWorld, theme, setActiveWorld, cssVariables } = useWorldTheme()
   const [activeCategory, setActiveCategory] = useState<CategoryFilterValue>("all")
+<<<<<<< HEAD
+=======
+  const [searchQuery, setSearchQuery] = useState("")
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null)
 
   // Structural & GSAP animation refs
@@ -166,7 +177,11 @@ export function EventsSection() {
     return counts
   }, [activeWorld])
 
+<<<<<<< HEAD
   // Filtered events based on independent world and category filters
+=======
+  // Filtered events based on BOTH independent filters and search query
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
   const filteredEvents = useMemo(() => {
     return eventsData.filter((ev) => {
       const matchesWorld =
@@ -175,9 +190,24 @@ export function EventsSection() {
       const matchesCategory =
         activeCategory === "all" || ev.category === activeCategory
 
+<<<<<<< HEAD
       return matchesWorld && matchesCategory
     })
   }, [activeWorld, activeCategory])
+=======
+      const matchesSearch =
+        searchQuery.trim() === "" ||
+        ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ev.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (ev.displayCategory &&
+          ev.displayCategory.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        ev.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ev.venue.toLowerCase().includes(searchQuery.toLowerCase())
+
+      return matchesWorld && matchesCategory && matchesSearch
+    })
+  }, [activeWorld, activeCategory, searchQuery])
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
 
   return (
     <section
@@ -195,6 +225,29 @@ export function EventsSection() {
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
         aria-hidden="true"
       >
+<<<<<<< HEAD
+=======
+        {/* Floating Coordinates Waypoint (Top Left Flank) */}
+        <div
+          data-parallax="3"
+          className="hidden lg:flex absolute top-28 left-6 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/80 px-3 py-1 font-mono text-[9px] text-[var(--theme-muted-foreground)] shadow-sm backdrop-blur-xs animate-voyage-float"
+        >
+          <span className="text-[var(--theme-accent)]">⚓</span>
+          <span>LAT 15°29&apos;N</span>
+          <span className="text-[var(--theme-accent)]">•</span>
+          <span>LNG 75°01&apos;E</span>
+        </div>
+
+        {/* Floating Mini Sextant / Compass Tag (Top Right Flank) */}
+        <div
+          data-parallax="3"
+          className="hidden lg:flex absolute top-36 right-8 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/80 px-3 py-1 font-mono text-[9px] text-[var(--theme-muted-foreground)] shadow-sm backdrop-blur-xs animate-voyage-float-alt"
+        >
+          <CompassRoseMini size={14} className="text-[var(--theme-accent)]" />
+          <span>EXPEDITION CLEARANCE ACTIVE</span>
+        </div>
+
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
         {/* Floating Celestial Sparkle (Hero Near Title) */}
         <div
           data-parallax="3"
@@ -214,6 +267,7 @@ export function EventsSection() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+<<<<<<< HEAD
         {/* ─── WORLD-SELECTION TABS (TAB SWITCHING ABOVE ISLAND DESCRIPTION) ─── */}
         <div className="mb-10 flex justify-center">
           <WorldTabs
@@ -226,6 +280,25 @@ export function EventsSection() {
         {/* ─── ISLAND DESCRIPTION (LARGE WORLD HERO SECTION) ───────────── */}
         <div ref={heroContainerRef} className="mb-12 text-center md:mb-16">
           {/* Dynamic Hero Main Title */}
+=======
+        {/* ─── HERO SECTION: STAGGERED INTRO SEQUENCE (< 1s) ─────────── */}
+        <div ref={heroContainerRef} className="mb-12 text-center md:mb-16">
+          {/* 1. Eyebrow Navigation Coordinates & Sector Marker */}
+          <div
+            ref={heroEyebrowRef}
+            data-parallax="4"
+            className="mb-3.5 inline-flex items-center gap-2.5 rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)]/85 px-4 py-1.5 text-[10px] font-bold tracking-[0.22em] text-[var(--theme-primary)] uppercase shadow-md backdrop-blur-sm transition-colors duration-300 will-change-transform"
+          >
+            <AvinyaSailIcon variant="cream" size={14} alt="" />
+            <span>{theme.heroEyebrow}</span>
+            <span className="text-[var(--theme-accent)]">•</span>
+            <span className="font-mono text-[var(--theme-accent)]">
+              {theme.coordinates}
+            </span>
+          </div>
+
+          {/* 2. Dynamic Hero Main Title */}
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
           <div>
             <h2
               ref={heroTitleRef}
@@ -234,7 +307,11 @@ export function EventsSection() {
               {theme.heroTitle}
             </h2>
 
+<<<<<<< HEAD
             {/* Editorial Subtitle Focused on World Identity (Island Description) */}
+=======
+            {/* 3. Editorial Subtitle Focused on World Identity */}
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
             <p
               ref={heroSubtitleRef}
               className="mx-auto mt-3 max-w-2xl font-serif text-base text-[var(--theme-muted-foreground)] italic sm:text-lg transition-colors duration-300 will-change-transform"
@@ -243,7 +320,11 @@ export function EventsSection() {
             </p>
           </div>
 
+<<<<<<< HEAD
           {/* Decorative Compass Divider */}
+=======
+          {/* 4. Decorative Compass Divider */}
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
           <div
             ref={heroDividerRef}
             data-parallax="4"
@@ -255,12 +336,76 @@ export function EventsSection() {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* ─── EXPEDITION CATEGORY SELECTOR ───────────────────────── */}
         <div className="mb-8">
           <CategoryFilters
             activeCategory={activeCategory}
             onSelectCategory={handleSelectCategory}
             categoryCounts={categoryCounts}
+=======
+        {/* ─── WORLD SHOWCASE NARRATIVE STRIP (WHEN A WORLD IS SELECTED) */}
+        {activeWorld !== "ALL" && (
+          <div
+            className="mb-8 flex flex-col items-center justify-between gap-4 rounded-xs border border-[var(--theme-border)] bg-[var(--theme-card)]/80 p-4 text-[var(--theme-primary)] shadow-md backdrop-blur-sm transition-all duration-500 sm:flex-row sm:px-6"
+            style={{
+              borderLeftWidth: "4px",
+              borderLeftColor: "var(--theme-accent)",
+            }}
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[var(--theme-border)] bg-[var(--theme-card)] shadow-md">
+                <Image
+                  src={theme.motifs.icon}
+                  alt={theme.name}
+                  fill
+                  sizes="48px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="text-left">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[9.5px] font-bold tracking-widest text-[var(--theme-accent)] uppercase">
+                    {theme.day} // {theme.date}
+                  </span>
+                  <span className="font-mono text-[9px] text-[var(--theme-muted-foreground)]">
+                    {theme.coordinates}
+                  </span>
+                  <span className="rounded-full border border-[var(--theme-accent)]/50 bg-[var(--theme-accent-soft)] px-2 py-0.2 font-mono text-[8px] font-bold tracking-wider text-[var(--theme-accent)] uppercase">
+                    {theme.motifs.statusIndicator}
+                  </span>
+                </div>
+                <h3 className="font-serif text-base font-bold tracking-wider text-[var(--theme-primary)] uppercase sm:text-lg">
+                  {theme.name}
+                </h3>
+                <p className="text-xs text-[var(--theme-muted-foreground)]">
+                  {theme.tagline}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleSelectWorld("ALL")}
+              className="shrink-0 cursor-pointer text-[10px] font-bold tracking-widest text-[var(--theme-muted-foreground)] uppercase underline underline-offset-4 transition-colors hover:text-[var(--theme-accent)]"
+            >
+              Show All Worlds
+            </button>
+          </div>
+        )}
+
+        {/* ─── DUAL INDEPENDENT FILTERS: WORLD + CATEGORY + SEARCH ───── */}
+        <div className="mb-8">
+          <EventFilters
+            activeWorld={activeWorld}
+            onSelectWorld={handleSelectWorld}
+            worldCounts={worldCounts}
+            activeCategory={activeCategory}
+            onSelectCategory={handleSelectCategory}
+            categoryCounts={categoryCounts}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
           />
         </div>
 
@@ -324,6 +469,10 @@ export function EventsSection() {
             onResetFilters={() => {
               handleSelectWorld("ALL")
               handleSelectCategory("all")
+<<<<<<< HEAD
+=======
+              setSearchQuery("")
+>>>>>>> 9c0e38c (HOME PAGE UPDATE)
             }}
           />
         </div>
