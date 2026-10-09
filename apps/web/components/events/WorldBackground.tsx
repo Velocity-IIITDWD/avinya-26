@@ -158,13 +158,6 @@ export function WorldBackground({ theme, containerRef }: WorldBackgroundProps) {
           <circle cx="250" cy="50" r="70" stroke="#E05A2B" strokeWidth="0.8" strokeDasharray="4 6" opacity="0.4" />
         </svg>
 
-        {/* Layer 6: Technical Telemetry & Sector Coordinates */}
-        <div
-          data-parallax="3"
-          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#E05A2B]/75 uppercase"
-        >
-          <span>SECTOR 01 // DESERT FRONTIER // LAT 15°28&apos;40&quot;N • LNG 75°01&apos;15&quot;E</span>
-        </div>
 
         {/* Layer 7: Sparse Drifting Desert Dust Particles */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -346,13 +339,6 @@ export function WorldBackground({ theme, containerRef }: WorldBackgroundProps) {
           />
         </div>
 
-        {/* Layer 8: Sector Coordinates Header */}
-        <div
-          data-parallax="3"
-          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#F5C542]/80 uppercase"
-        >
-          <span>SECTOR 03 // TROPICAL FESTIVAL LAGOON // 15°29&apos;55&quot;N 75°02&apos;20&quot;E</span>
-        </div>
       </div>
 
       {/* ─── WORLD 3: PANDEMONIUM (RETRO FUTURISTIC SYNTHWAVE METROPOLIS) ── */}
@@ -465,17 +451,6 @@ export function WorldBackground({ theme, containerRef }: WorldBackgroundProps) {
           }}
         />
 
-        {/* Layer 7: Sector Coordinates Telemetry Header */}
-        <div
-          data-parallax="3"
-          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#FF007F] uppercase"
-          style={{
-            textShadow: "0 0 10px rgba(255, 0, 127, 0.7)",
-            animation: "neonFlicker 6s infinite",
-          }}
-        >
-          <span>SECTOR 02 // SYNTHWAVE METROPOLIS // 15°29&apos;10&quot;N 75°01&apos;45&quot;E</span>
-        </div>
 
         {/* Layer 8: Floating Neon Particles */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -540,13 +515,6 @@ export function WorldBackground({ theme, containerRef }: WorldBackgroundProps) {
           <circle cx="750" cy="260" r="3" fill="#F5C542" />
         </svg>
 
-        {/* Archipelago Coordinates Header */}
-        <div
-          data-parallax="3"
-          className="absolute top-8 left-8 font-mono text-[9.5px] tracking-[0.28em] text-[#C5A059]/80 uppercase"
-        >
-          <span>AVINYA EXPEDITION MAP // THREE WORLDS ARCHIPELAGO // 15°29&apos;N 75°01&apos;E</span>
-        </div>
       </div>
 
       {/* ─── VOYAGE WATERMARK EMBLEM (SUBTLE STABLE VESSEL ANCHOR) ─────────── */}
