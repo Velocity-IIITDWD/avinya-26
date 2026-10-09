@@ -1,16 +1,10 @@
 "use client"
 
 import React, { useState, useMemo, useEffect, useRef } from "react"
-<<<<<<< HEAD
-import { eventsData, EventData } from "@/data/events"
-import { useWorldTheme, FilterValue, getWorldTheme } from "@/lib/theme"
-import { WorldTabs, CategoryFilters, CategoryFilterValue } from "./EventFilters"
-=======
 import Image from "next/image"
 import { eventsData, EventData } from "@/data/events"
 import { useWorldTheme, FilterValue, getWorldTheme } from "@/lib/theme"
 import { EventFilters, CategoryFilterValue } from "./EventFilters"
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
 import { EventGrid } from "./EventGrid"
 import { EventModal } from "./EventModal"
 import { WorldBackground } from "./WorldBackground"
@@ -25,10 +19,7 @@ import { useScrollParallax } from "@/hooks/useScrollParallax"
 export function EventsSection() {
   const { activeWorld, theme, setActiveWorld, cssVariables } = useWorldTheme()
   const [activeCategory, setActiveCategory] = useState<CategoryFilterValue>("all")
-<<<<<<< HEAD
-=======
   const [searchQuery, setSearchQuery] = useState("")
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null)
 
   // Structural & GSAP animation refs
@@ -177,11 +168,7 @@ export function EventsSection() {
     return counts
   }, [activeWorld])
 
-<<<<<<< HEAD
-  // Filtered events based on independent world and category filters
-=======
   // Filtered events based on BOTH independent filters and search query
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
   const filteredEvents = useMemo(() => {
     return eventsData.filter((ev) => {
       const matchesWorld =
@@ -190,11 +177,6 @@ export function EventsSection() {
       const matchesCategory =
         activeCategory === "all" || ev.category === activeCategory
 
-<<<<<<< HEAD
-      return matchesWorld && matchesCategory
-    })
-  }, [activeWorld, activeCategory])
-=======
       const matchesSearch =
         searchQuery.trim() === "" ||
         ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -203,11 +185,10 @@ export function EventsSection() {
           ev.displayCategory.toLowerCase().includes(searchQuery.toLowerCase())) ||
         ev.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         ev.venue.toLowerCase().includes(searchQuery.toLowerCase())
-
       return matchesWorld && matchesCategory && matchesSearch
     })
   }, [activeWorld, activeCategory, searchQuery])
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
+  }, [activeWorld, activeCategory, searchQuery])
 
   return (
     <section
@@ -225,8 +206,6 @@ export function EventsSection() {
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none"
         aria-hidden="true"
       >
-<<<<<<< HEAD
-=======
         {/* Floating Coordinates Waypoint (Top Left Flank) */}
         <div
           data-parallax="3"
@@ -247,7 +226,6 @@ export function EventsSection() {
           <span>EXPEDITION CLEARANCE ACTIVE</span>
         </div>
 
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
         {/* Floating Celestial Sparkle (Hero Near Title) */}
         <div
           data-parallax="3"
@@ -267,20 +245,6 @@ export function EventsSection() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-<<<<<<< HEAD
-        {/* ─── WORLD-SELECTION TABS (TAB SWITCHING ABOVE ISLAND DESCRIPTION) ─── */}
-        <div className="mb-10 flex justify-center">
-          <WorldTabs
-            activeWorld={activeWorld}
-            onSelectWorld={handleSelectWorld}
-            worldCounts={worldCounts}
-          />
-        </div>
-
-        {/* ─── ISLAND DESCRIPTION (LARGE WORLD HERO SECTION) ───────────── */}
-        <div ref={heroContainerRef} className="mb-12 text-center md:mb-16">
-          {/* Dynamic Hero Main Title */}
-=======
         {/* ─── HERO SECTION: STAGGERED INTRO SEQUENCE (< 1s) ─────────── */}
         <div ref={heroContainerRef} className="mb-12 text-center md:mb-16">
           {/* 1. Eyebrow Navigation Coordinates & Sector Marker */}
@@ -296,9 +260,7 @@ export function EventsSection() {
               {theme.coordinates}
             </span>
           </div>
-
           {/* 2. Dynamic Hero Main Title */}
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
           <div>
             <h2
               ref={heroTitleRef}
@@ -307,11 +269,7 @@ export function EventsSection() {
               {theme.heroTitle}
             </h2>
 
-<<<<<<< HEAD
-            {/* Editorial Subtitle Focused on World Identity (Island Description) */}
-=======
             {/* 3. Editorial Subtitle Focused on World Identity */}
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
             <p
               ref={heroSubtitleRef}
               className="mx-auto mt-3 max-w-2xl font-serif text-base text-[var(--theme-muted-foreground)] italic sm:text-lg transition-colors duration-300 will-change-transform"
@@ -320,11 +278,7 @@ export function EventsSection() {
             </p>
           </div>
 
-<<<<<<< HEAD
-          {/* Decorative Compass Divider */}
-=======
           {/* 4. Decorative Compass Divider */}
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
           <div
             ref={heroDividerRef}
             data-parallax="4"
@@ -336,14 +290,6 @@ export function EventsSection() {
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* ─── EXPEDITION CATEGORY SELECTOR ───────────────────────── */}
-        <div className="mb-8">
-          <CategoryFilters
-            activeCategory={activeCategory}
-            onSelectCategory={handleSelectCategory}
-            categoryCounts={categoryCounts}
-=======
         {/* ─── WORLD SHOWCASE NARRATIVE STRIP (WHEN A WORLD IS SELECTED) */}
         {activeWorld !== "ALL" && (
           <div
@@ -405,7 +351,6 @@ export function EventsSection() {
             categoryCounts={categoryCounts}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
           />
         </div>
 
@@ -469,10 +414,7 @@ export function EventsSection() {
             onResetFilters={() => {
               handleSelectWorld("ALL")
               handleSelectCategory("all")
-<<<<<<< HEAD
-=======
               setSearchQuery("")
->>>>>>> 9c0e38c (HOME PAGE UPDATE)
             }}
           />
         </div>
