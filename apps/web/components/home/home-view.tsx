@@ -8,7 +8,6 @@ import {
   HorizontalVoyageType,
   SponsorsHarbor,
 } from "@/components/expedition"
-import { ScheduleVoyage } from "@/components/schedule"
 import { ContactDispatch } from "@/components/contact"
 import { VoyageFooter } from "@/components/footer"
 
@@ -30,13 +29,10 @@ export function HomeView() {
       {/* 05. The Call // Horizontal scroll typography */}
       <HorizontalVoyageType />
 
-      {/* 06. The Itinerary // 3-Day Voyage Route */}
-      <ScheduleVoyage />
-
-      {/* 07. The Port // Contact & Telegraph Dispatch */}
+      {/* 06. The Port // Contact & Telegraph Dispatch */}
       <ContactDispatch />
 
-      {/* 08. The Anchor // Maritime Editorial Footer */}
+      {/* 07. The Anchor // Maritime Editorial Footer */}
       <VoyageFooter />
     </div>
   )

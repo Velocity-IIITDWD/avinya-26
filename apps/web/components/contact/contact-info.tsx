@@ -28,7 +28,7 @@ const SECRETARIATS = [
 
 export function ContactInfo() {
   return (
-    <div className="flex flex-col justify-between rounded-2xl border-2 border-[#062A3A]/20 bg-[#F8EFE0] p-8 shadow-lg lg:col-span-6 dark:border-[#F4E8D1]/20 dark:bg-[#041B26]">
+    <div className="flex flex-col justify-between rounded-2xl border-2 border-[#062A3A]/20 bg-[#F8EFE0] p-8 shadow-lg dark:border-[#F4E8D1]/20 dark:bg-[#041B26]">
       <div>
         <div className="flex items-center justify-between border-b border-[#062A3A]/15 pb-4 dark:border-[#F4E8D1]/15">
           <span className="font-mono text-xs font-bold tracking-[0.2em] text-[#C85A2B] uppercase">

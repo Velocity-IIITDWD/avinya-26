@@ -2,7 +2,6 @@
 
 import React from "react"
 import { ContactInfo } from "./contact-info"
-import { ContactForm } from "./contact-form"
 
 export function ContactDispatch() {
   return (
@@ -29,15 +28,14 @@ export function ContactDispatch() {
           </h2>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#062A3A]/75 sm:text-base dark:text-[#F4E8D1]/75">
-            Send dispatches to the bridge or contact the port authorities directly for
+            Contact the port authorities and festival secretariat directly for
             contingent registrations, sponsorships, and queries.
           </p>
         </div>
 
-        {/* Contact Split Container */}
-        <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
+        {/* Contact Container */}
+        <div className="mx-auto mt-14 max-w-3xl">
           <ContactInfo />
-          <ContactForm />
         </div>
       </div>
     </section>
