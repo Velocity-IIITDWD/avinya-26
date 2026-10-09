@@ -29,7 +29,7 @@ export function Navbar() {
               <Link
                 href="/"
                 aria-label="Avinya Home"
-                className="mr-1 flex shrink-0 items-center rounded-full p-1 outline-none focus-visible:ring-1 focus-visible:ring-[var(--theme-accent,#C85A2B)]"
+                className="mr-1 flex shrink-0 items-center rounded-full p-1 outline-none focus-visible:ring-1 focus-visible:ring-[#B95F3B]"
               >
                 <Image
                   src="/favicon.ico"

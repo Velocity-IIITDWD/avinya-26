@@ -1,11 +1,11 @@
 /* Avinya Vintage Nautical Voyage Navigation Styling */
 
 :root {
-  --avinya-navy: #062A3A;
-  --avinya-cream: #F4E8D1;
-  --avinya-cream-dark: #EDE0C8;
-  --avinya-orange: #C85A2B;
-  --avinya-ocean: #0A3448;
+  --avinya-navy: #102747;
+  --avinya-cream: #CDB07B;
+  --avinya-cream-dark: #BE9F66;
+  --avinya-orange: #B95F3B;
+  --avinya-ocean: #102747;
   --avinya-brass: #C5A059;
   --avinya-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
