@@ -105,7 +105,7 @@ export const worldThemes: Record<WorldThemeKey, WorldTheme> = {
       coordinateGrid: "SECTOR 01 // 15°28'40\"N 75°01'15\"E",
       icon: "/images/worlds/last-outpost.webp",
       islandImage: "/images/LastOutpost.webp",
-      bgImage: "/images/worlds/last-outpost-ref.webp",
+      bgImage: "/images/Lone Explorer Beneath a Giant Moon.png",
     },
   },
   pandemonium: {
@@ -150,7 +150,7 @@ export const worldThemes: Record<WorldThemeKey, WorldTheme> = {
       coordinateGrid: "SECTOR 02 // 15°29'10\"N 75°01'45\"E",
       icon: "/images/worlds/pandemonium.webp",
       islandImage: "/images/pandemonium.webp",
-      bgImage: "/images/worlds/pandemonium-ref.webp",
+      bgImage: "/images/Neon Island City at Sunset.png",
     },
   },
   carnivalIsland: {
@@ -195,7 +195,7 @@ export const worldThemes: Record<WorldThemeKey, WorldTheme> = {
       coordinateGrid: "SECTOR 03 // 15°29'55\"N 75°02'20\"E",
       icon: "/images/worlds/carnival-island.webp",
       islandImage: "/images/carnivalisland.webp",
-      bgImage: "/images/worlds/carnival-island-ref.webp",
+      bgImage: "/images/Twilight Lights Over the Waterfront Pier.png",
     },
   },
   all: {
